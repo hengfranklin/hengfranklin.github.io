@@ -1,2 +1,3 @@
 name: Franklin Heng 
 markdown: kramdown
+permalink: /blog/:year/:month/:day/:title
