@@ -1,0 +1,26 @@
+---
+layout: page
+---
+<div class="project">
+  {% if page.role or page.date_display or page.affiliation or page.category %}
+    <div class="project-info">
+      {% if page.role %}
+        <p><strong>Role:</strong> {{ page.role }}</p>
+      {% endif %}
+
+      {% if page.date_display %}
+        <p><strong>Dates:</strong> {{ page.date_display }}</p>
+      {% endif %}
+
+      {% if page.affiliation %}
+        <p><strong>Affiliation:</strong> {{ page.affiliation }}</p>
+      {% endif %}
+
+      {% if page.category %}
+        <p><strong>Category:</strong> {{ page.category | replace: "-", " " | replace: "cv ml", "Computer Vision &amp; ML" | replace: "ai engineering", "Full-Stack AI Engineering" | replace: "earlier work", "Earlier Work" }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {{ content }}
+</div>

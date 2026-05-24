@@ -1,0 +1,26 @@
+<div class="timeline-item">
+  <div class="timeline-meta">
+    <div class="timeline-date">{{ project.date_display }}</div>
+    {% if project.role %}<div class="timeline-role">{{ project.role }}</div>{% endif %}
+  </div>
+  <div class="timeline-axis">
+    <div class="timeline-dot"></div>
+  </div>
+  <a class="timeline-card" href="{% if project.redirect %}{{ project.redirect }}{% else %}{{ project.url | relative_url }}{% endif %}">
+    {% if project.img %}
+      <div class="timeline-card-image">
+        {%
+          include figure.liquid
+          loading="eager"
+          path=project.img
+          sizes="(min-width: 768px) 480px, 100vw"
+          alt=project.title
+        %}
+      </div>
+    {% endif %}
+    <div class="timeline-card-body">
+      <h3 class="timeline-card-title">{{ project.title }}</h3>
+      <p class="timeline-card-text">{{ project.description }}</p>
+    </div>
+  </a>
+</div>

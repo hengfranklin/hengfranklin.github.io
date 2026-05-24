@@ -1,0 +1,23 @@
+<a class="project-card" href="{% if project.redirect %}{{ project.redirect }}{% else %}{{ project.url | relative_url }}{% endif %}">
+  {% if project.img %}
+    <div class="project-card-image"{% if project.img_position %} style="--card-img-pos: {{ project.img_position }};"{% endif %}>
+      {%
+        include figure.liquid
+        loading="eager"
+        path=project.img
+        sizes="(min-width: 768px) 480px, 100vw"
+        alt=project.title
+      %}
+    </div>
+  {% endif %}
+  <div class="project-card-body">
+    {% if project.role or project.date_display %}
+      <div class="project-card-meta">
+        {% if project.role %}<span class="meta-role">{{ project.role }}</span>{% endif %}
+        {% if project.date_display %}<span class="meta-date">{{ project.date_display }}</span>{% endif %}
+      </div>
+    {% endif %}
+    <h3 class="project-card-title">{{ project.title }}</h3>
+    <p class="project-card-text">{{ project.description }}</p>
+  </div>
+</a>

@@ -40,6 +40,16 @@ body.sticky-bottom-footer {
   }
 }
 
+// Location line under the page title (e.g. about page header).
+// Scoped to .post-header to override p.location in _cv.scss.
+.post-header .location {
+  font-size: 1.05rem;
+  color: var(--global-text-color);
+  margin-top: -0.25rem;
+  margin-bottom: 0.75rem;
+  white-space: normal;
+}
+
 // Content layout uses Bootstrap's grid system with responsive columns
 // Main content flows naturally through container-mt-5 and Bootstrap grid classes
 // See _layouts/default.liquid and _includes/projects.liquid for examples
@@ -56,3 +66,27 @@ body.sticky-bottom-footer {
 *****************************************************************************/
 
 // TODO: redefine projects layout.
+
+// Toast notification for the email-copy click handler (see assets/js/email-copy.js).
+#email-copy-toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translate(-50%, 12px);
+  background: var(--global-text-color);
+  color: var(--global-bg-color);
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+  z-index: 11000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+
+  &.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
