@@ -18,7 +18,7 @@ latest_posts:
   enabled: false
 ---
 
-I'm a [computer vision](https://en.wikipedia.org/wiki/Computer_vision) engineer based in NYC. I've built solutions across healthcare, climate, and robotics.
+I'm a computer vision / ML engineer based in NYC. I've built solutions across healthcare, climate, and robotics.
 
 I chose to study computer science after reading an article on neuroprosthetics. It reminded me of my grandmother, who was half paralyzed after a stroke, and I decided I wanted to build technology that helps people like her.
 
@@ -32,4 +32,4 @@ Additionally, I'm a Data Diplomat at [NYC Data Science for Social Good](https://
 
 - 🥪 Child of [Cambodian sandwich/bakery shop owners](https://www.youtube.com/watch?v=h86E-X3m9YY)
 - 🚑 I worked as a full-time EMT
-- 📚 Recently got hooked on translated Japanese fiction books
+- 📚 Recently got hooked on Japanese fiction novels
