@@ -14,8 +14,12 @@ services:
     #     USERNAME: # echo $USER
     ports:
       - 8080:8080
-      - 35729:35729
+      # LiveReload bound to localhost only — prevents external traffic (e.g. tunnels,
+      # Cloudflare scanners) from hitting the WebSocket port and crashing Jekyll's
+      # parser. The local browser at 127.0.0.1 still gets auto-reload.
+      - 127.0.0.1:35729:35729
     volumes:
       - .:/srv/jekyll
     environment:
       - JEKYLL_ENV=development
+    restart: unless-stopped

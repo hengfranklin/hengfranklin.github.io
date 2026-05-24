@@ -13,7 +13,7 @@ role: Data Science for Social Good (NYCxDSSG)
 
 ## Overview
 
-An open-source civic AI platform for journalists, lawyers, researchers, and citizens — covering the full FOIA lifecycle from discovery through filing through tracking through pattern analysis. Built with NYC Data Science for Social Good. The codebase is a FastAPI backend + Next.js 14 frontend, Supabase for persistence and auth, Claude (Haiku 4.5 + Sonnet 4.6) for the language model work, and a registry-driven ingest pipeline that pulls from 19 federal sources daily.
+An open-source civic AI platform for journalists, lawyers, researchers, and citizens, covering the full FOIA lifecycle from discovery through filing through tracking through pattern analysis. Built with NYC Data Science for Social Good. The codebase is a FastAPI backend + Next.js 14 frontend, Supabase for persistence and auth, Claude (Haiku 4.5 + Sonnet 4.6) for the language model work, and a registry-driven ingest pipeline that pulls from 19 federal sources daily.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -21,7 +21,7 @@ An open-source civic AI platform for journalists, lawyers, researchers, and citi
   </div>
 </div>
 <div class="caption">
-  Homepage — entry to Discover & Draft, the Transparency Hub, Live FOIA Signals, My Requests, and the chat assistant.
+  Homepage: entry to Discover & Draft, the Transparency Hub, Live FOIA Signals, My Requests, and the chat assistant.
 </div>
 
 ## Live + Code
@@ -66,9 +66,9 @@ Frontend (Next.js 14)          Backend (FastAPI)              External Services
 
 The backend is async-native (FastAPI + asyncio) so the same process can serve user requests *and* tick the 19-source ingest dispatcher on a 60-minute loop without external cron infrastructure.
 
-## 1. Discover and Draft — Grounded Request Drafting
+## 1. Discover and Draft: Grounded Request Drafting
 
-The discover-and-draft pipeline is the platform's flagship feature: a natural-language query becomes a unified result set across MuckRock, DocumentCloud, and the open web — and any result can be converted into a fully drafted FOIA request grounded in verified legal context.
+The discover-and-draft pipeline is the platform's flagship feature: a natural-language query becomes a unified result set across MuckRock, DocumentCloud, and the open web, and any result can be converted into a drafted FOIA request grounded in verified legal context.
 
 ### Query interpretation
 
@@ -90,20 +90,20 @@ Left filter rail (source / year / type / sort), unified compact row list of resu
   </div>
 </div>
 <div class="caption">
-  Discover & Draft — unified search across MuckRock, DocumentCloud, and the open web. The detail pane drives Save, Track, and Draft actions.
+  Discover & Draft: unified search across MuckRock, DocumentCloud, and the open web. The detail pane drives Save, Track, and Draft actions.
 </div>
 
 ### Anti-hallucination drafting
 
 The drafter cannot cite law from the model's training data. Each generated request letter is grounded in **three explicit context layers**, retrieved fresh per request:
 
-1. **Statute text** — the relevant federal or state FOIA/FOIL/CPRA/PIA statute.
-2. **Agency regulations** — verbatim CFR text pulled from the **eCFR API**, scoped to the target agency.
-3. **Agency outcomes** — historical request outcomes for that agency from **MuckRock** (successful, denied, exemptions cited).
+1. **Statute text:** the relevant federal or state FOIA/FOIL/CPRA/PIA statute.
+2. **Agency regulations:** verbatim CFR text pulled from the **eCFR API**, scoped to the target agency.
+3. **Agency outcomes:** historical request outcomes for that agency from **MuckRock** (successful, denied, exemptions cited).
 
 The drafter is constrained by prompt to only cite from this retrieved context. The resulting letter is paired with a *"How We Built This Draft"* interpretability panel that surfaces which strategies the model applied and why.
 
-## 2. Live FOIA Signals — Multi-Source Ingest
+## 2. Live FOIA Signals: Multi-Source Ingest
 
 A real-time intelligence feed aggregating government activity from **19 federal sources**, with cross-source pattern detection on top.
 
@@ -111,18 +111,18 @@ A real-time intelligence feed aggregating government activity from **19 federal 
 
 Adding a source is **one entry** in `backend/app/data/signals_sources.py` (a `SourceConfig`). No new cron jobs and no new scripts. Six fetch strategies handle the format variation:
 
-- **RSS** — most agency news feeds (DOJ press, White House actions, FDA press).
-- **HTML scrape** — agency pages without machine-readable feeds.
-- **JSON API** — structured endpoints (Congress.gov, regulations.gov, CourtListener, SAM.gov).
-- **CSV bulk download** — bulk datasets (FEC, certain enforcement archives).
-- **Sitemap crawl** — for sources that expose `sitemap.xml` but no feeds.
-- **PDF vision** — Claude multimodal for sources that publish FOIA logs as PDFs (e.g. DHS FOIA logs), where text-extraction tools fail on scanned tables.
+- **RSS:** most agency news feeds (DOJ press, White House actions, FDA press).
+- **HTML scrape:** agency pages without machine-readable feeds.
+- **JSON API:** structured endpoints (Congress.gov, regulations.gov, CourtListener, SAM.gov).
+- **CSV bulk download:** bulk datasets (FEC, certain enforcement archives).
+- **Sitemap crawl:** for sources that expose `sitemap.xml` but no feeds.
+- **PDF vision:** Claude multimodal for sources that publish FOIA logs as PDFs (e.g. DHS FOIA logs), where text-extraction tools fail on scanned tables.
 
 Coverage spans enforcement (EPA ECHO, FDA warning letters, NHTSA / CPSC / USDA FSIS recalls, IRS), courts (SEC EDGAR litigation, CourtListener opinions, DOJ press), oversight (IG reports, CIGIE aggregator, GAO bid protests and reports), elections + lobbying (FEC enforcement, Senate LDA), executive (White House, regulations.gov dockets, SAM.gov contracts), and legislative (Congress.gov bills) channels.
 
 ### Dispatcher loop
 
-A 60-minute `asyncio` loop ticks an in-process dispatcher. Each source self-gates by its per-source `cadence_minutes` field — daily sources run once per day, hourly sources run every hour, all without external cron. Pattern detection (below) fires automatically inline after new signals land, with a 12-hour debounce.
+A 60-minute `asyncio` loop ticks an in-process dispatcher. Each source self-gates by its per-source `cadence_minutes` field: daily sources run once per day, hourly sources run every hour, all without external cron. Pattern detection (below) fires automatically inline after new signals land, with a 12-hour debounce.
 
 ### Categorization + entity resolution
 
@@ -136,24 +136,24 @@ A 60-minute `asyncio` loop ticks an in-process dispatcher. Each source self-gate
   </div>
 </div>
 <div class="caption">
-  Live FOIA Signals — feed aggregating 19 federal sources, with AI-detected cross-source patterns surfacing on the same dashboard.
+  Live FOIA Signals: feed aggregating 19 federal sources, with AI-detected cross-source patterns surfacing on the same dashboard.
 </div>
 
 ## 3. Pattern Detection Engine
 
-Built on top of the ingest layer: a Claude-driven engine that detects **cross-source narratives** — patterns no single source can show on its own.
+Built on top of the ingest layer: a Claude-driven engine that detects **cross-source narratives**, patterns no single source can show on its own.
 
 ### Seven pattern types
 
 Each encodes a different temporal / agency-flow shape:
 
-- **Compounding risk** — multiple risk signals stacking on one entity.
-- **Coordinated activity** — multiple agencies acting on the same entity in close succession.
-- **Trend shift** — change in volume or pattern of a category over time.
-- **Convergence** — independent signals converging on the same target.
-- **Regulatory cascade** — one regulation triggers downstream enforcement / litigation.
-- **Recall → litigation** — product recalls followed by lawsuits.
-- **Oversight → action** — IG / GAO findings followed by enforcement.
+- **Compounding risk:** multiple risk signals stacking on one entity.
+- **Coordinated activity:** multiple agencies acting on the same entity in close succession.
+- **Trend shift:** change in volume or pattern of a category over time.
+- **Convergence:** independent signals converging on the same target.
+- **Regulatory cascade:** one regulation triggers downstream enforcement / litigation.
+- **Recall → litigation:** product recalls followed by lawsuits.
+- **Oversight → action:** IG / GAO findings followed by enforcement.
 
 ### Sliding window + dedup
 
@@ -171,10 +171,10 @@ A force-directed graph (d3-force) renders each pattern as a colored cluster. **S
   </div>
 </div>
 <div class="caption">
-  Pattern galaxy — each cluster is one Claude-detected cross-source pattern. Nodes are signals (colored by cluster) and shared entities (companies, agencies, people, locations) that link clusters.
+  Pattern galaxy: each cluster is one Claude-detected cross-source pattern. Nodes are signals (colored by cluster) and shared entities (companies, agencies, people, locations) that link clusters.
 </div>
 
-## 4. AI Chat Assistant — Tool-Using + Tiered Accuracy
+## 4. AI Chat Assistant: Tool-Using + Tiered Accuracy
 
 A persistent FOIA research assistant available on every page (Cmd+K toggle), with **tool use**, anti-hallucination grounding, and an explicit cost / accuracy tiering.
 
@@ -196,23 +196,23 @@ A persistent FOIA research assistant available on every page (Cmd+K toggle), wit
 
 Each user message resolves through an escalation ladder:
 
-1. **Instant local lookup** — reference data the backend ships with (exemption catalog, agency directory, persona definitions).
-2. **Trusted-domain web search** — Tavily, scoped to a curated whitelist of authoritative domains.
-3. **Deep research agent** — broader search + multi-tool chaining, escalates the model from **Haiku 4.5 to Sonnet 4.6**.
-4. **Graceful fallback** — when no source can satisfy the question, returns a structured response with the resource links it consulted rather than fabricating an answer.
+1. **Instant local lookup:** reference data the backend ships with (exemption catalog, agency directory, persona definitions).
+2. **Trusted-domain web search:** Tavily, scoped to a curated whitelist of authoritative domains.
+3. **Deep research agent:** broader search + multi-tool chaining, escalates the model from **Haiku 4.5 to Sonnet 4.6**.
+4. **Graceful fallback:** when no source can satisfy the question, returns a structured response with the resource links it consulted rather than fabricating an answer.
 
 ### Safety constraints
 
-- **Read-only at the code level.** The chat cannot modify any database records — enforced in `chat_tools.py`, not just in the prompt.
+- **Read-only at the code level.** The chat cannot modify any database records, enforced in `chat_tools.py`.
 - **Grounded in tool results.** Every fact must come from a tool result or verified reference data. Sources surface as clickable chips next to the answer.
 - **Platform-expert mode.** Knows which page the user is on and tailors guidance.
 - **SSE streaming.** Real-time response with thinking dots, tool-call indicators, and incremental text.
 
-## 5. Transparency Hub — Aggregation + Composite Scoring
+## 5. Transparency Hub: Aggregation + Composite Scoring
 
 A public dashboard surfacing aggregated FOIA performance data across the federal government and 54 state jurisdictions.
 
-### Federal — 1,600+ agencies
+### Federal: 1,600+ agencies
 
 Each agency gets a **Transparency Score**, a single composite metric:
 
@@ -225,15 +225,15 @@ Transparency Score = 0.40 · success_rate
 
 Backed by MuckRock data refreshed weekly into Supabase. Each agency has a per-agency deep dive (outcome pie chart, score breakdown, exemption patterns, success/denial patterns).
 
-### State + local — choropleth
+### State + local: choropleth
 
 Interactive US map color-coded by per-state transparency score, with click-through to per-state stats and a searchable agency directory. Jurisdiction-scoped agency routing (`/hub/states/california/department-of-education`) avoids slug conflicts across states.
 
-### Insights — FOIA.gov annual reports
+### Insights: FOIA.gov annual reports
 
 Long-range trends pulled from FOIA.gov annual reports (FY 2008–2024) into a Recharts-based dashboard: request volume, transparency rates, processing times, costs and staffing, appeals and litigation. Plus a Claude-curated **AI News Digest** that ingests 10 RSS feeds and produces categorized FOIA news summaries.
 
-## 6. My Requests — Workflow Engine
+## 6. My Requests: Workflow Engine
 
 Per-user request lifecycle from filing through resolution.
 
@@ -250,9 +250,9 @@ Per-user request lifecycle from filing through resolution.
 
 **Frontend:** Next.js 14 (React 18, TypeScript, App Router, SSR), Recharts for charts, react-simple-maps for the state choropleth, d3-force for the pattern galaxy.
 
-**AI + search:** Claude API — Haiku 4.5 default, Sonnet 4.6 escalation, Sonnet 4.6 for pattern detection and PDF-vision ingest. Tool use, 200K context. Tavily API for domain-scoped web search.
+**AI + search:** Claude API, Haiku 4.5 default, Sonnet 4.6 escalation, Sonnet 4.6 for pattern detection and PDF-vision ingest. Tool use, 200K context. Tavily API for domain-scoped web search.
 
-**Infrastructure:** Railway (backend), Vercel (frontend). 19-source ingest dispatcher runs in-process inside the backend — no external cron.
+**Infrastructure:** Railway (backend), Vercel (frontend). 19-source ingest dispatcher runs in-process inside the backend, no external cron.
 
 ## Key Data Sources
 

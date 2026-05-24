@@ -14,7 +14,7 @@ role: Computer Vision Engineer · Running Tide
 
 ## Overview
 
-Computer vision systems built at Running Tide, a carbon removal company that grew kelp off the coast of Maine, to automate phenotypic measurement of harvested samples. V1 measures whole plants in 2D. V2 reconstructs individual blades in 3D.
+Computer vision systems we built at Running Tide, a carbon removal company that grew kelp off the coast of Maine, to automate phenotypic measurement of harvested samples. V1 measures whole plants in 2D. V2 reconstructs individual blades in 3D.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0">
@@ -30,9 +30,9 @@ Computer vision systems built at Running Tide, a carbon removal company that gre
 
 ## Why It Exists
 
-Running Tide grew offshore kelp farms along the coast of Maine as part of its carbon removal program. Each harvest cycle produced thousands of samples, and the team needed quantitative phenotype measurements (blade count, blade length and width, biomass proxies, volume) to track growth across buoys, strains, and conditions. Manual measurement with calipers and rulers did not scale, so two successive imaging rigs were built with matching computer vision pipelines.
+Running Tide grew offshore kelp farms along the coast of Maine as part of its carbon removal program. Each harvest cycle produced thousands of samples, and we needed quantitative phenotype measurements (blade count, blade length and width, biomass proxies, volume) to track growth across buoys, strains, and conditions. Manual measurement with calipers and rulers did not scale, so we built two successive imaging rigs with matching computer vision pipelines.
 
-## V1 — Kelp Photobooth
+## V1: Kelp Photobooth
 
 Overhead imaging of whole kelp plants harvested from offshore buoys. Output: blade count, length, width, and area per plant.
 
@@ -59,7 +59,7 @@ The rail moved the DSLR along the table so a full kelp plant could be captured a
 
 ### Classical Pipeline
 
-The first pipeline applied classical computer vision to whole-plant photos:
+Our first pipeline applied classical computer vision to whole-plant photos:
 
 ```
 DSLR overhead image
@@ -102,7 +102,7 @@ A second variant handled photos where operators detached blades and laid them ou
 
 ### Faster R-CNN Upgrade
 
-The classical pipeline struggled with overlapping blades, varying lighting, and debris. The detection stage was replaced with **Faster R-CNN ResNet-101 v1 (1024)**, trained on a custom `kelp_blades_detection` dataset labelled in the TensorFlow Object Detection API format.
+The classical pipeline struggled with overlapping blades, varying lighting, and debris. We replaced the detection stage with **Faster R-CNN ResNet-101 v1 (1024)**, trained on a custom `kelp_blades_detection` dataset labelled in the TensorFlow Object Detection API format.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0">
@@ -141,9 +141,9 @@ Final CSV schema: `image_name | buoy_name | date_harvested | height_bbox | width
   <b>Crop</b>: single blade from a detection box. <b>Mask</b>: binary segmentation used for area and arc length. <b>Dataset histogram</b>: per-blade areas across all farms and dates.
 </div>
 
-## V2 — Polar Bear
+## V2: Polar Bear
 
-Multi-view imaging of individual blades and full 3D reconstruction to recover shape, length, width, and volume in real-world units. V1 produced per-blade 2D statistics, but kelp blades are not flat — a 2D projection underestimates biomass — so V2 reconstructs each blade in 3D.
+Multi-view imaging of individual blades and full 3D reconstruction to recover shape, length, width, and volume in real-world units. V1 produced per-blade 2D statistics, but kelp blades are not flat, so a 2D projection underestimates biomass. V2 reconstructs each blade in 3D.
 
 ### End-to-End Flow
 
@@ -191,7 +191,7 @@ A different scene setup from V1. A single blade hangs from a fixture, with:
 
 ### Design Choice: SfM Over Active Depth Sensing
 
-Structure from Motion was chosen over active depth sensing (LiDAR or stereo). The imaging environment was fully controlled (lighting, rotation, backdrop), which let the pipeline optimize for dense feature matching across overlapping high-resolution stills. In a controlled setting SfM produces comparable geometry at a fraction of the hardware cost.
+We chose Structure from Motion over active depth sensing (LiDAR or stereo). The imaging environment was controlled (lighting, rotation, backdrop), which let the pipeline optimize for dense feature matching across overlapping high-resolution stills. In a controlled setting SfM produces comparable geometry at a fraction of the hardware cost.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0">

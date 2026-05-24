@@ -13,7 +13,7 @@ role: Computer Vision Engineer · Running Tide
 
 ## Overview
 
-A computer-vision system for counting shellfish (primarily oysters) on Running Tide's harvesting platform — a custom catamaran processing boat where harvested stock is moved past a multi-camera rig. Each frame holds **~1,000 shellfish, some as small as 2×2 pixels** at sensor resolution, with a per-frame time budget of **0.125 s** to stay synchronized with the platform's throughput. The model is a Faster R-CNN with anchor scales tuned for that small-object regime, plus a custom post-processing pass that refines the smallest detections before they hit the counter.
+A computer-vision system for counting shellfish (primarily oysters) on Running Tide's harvesting platform, a custom catamaran processing boat where harvested stock is moved past a multi-camera rig. Each frame holds **~1,000 shellfish, some as small as 2×2 pixels** at sensor resolution, with a per-frame time budget of **0.125 s** to stay synchronized with the platform's throughput. The model is a Faster R-CNN with anchor scales tuned for that small-object regime, plus a custom post-processing pass that refines the smallest detections before they hit the counter.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -43,12 +43,12 @@ The CV system runs on **Running Tide's custom 60 ft × 24 ft oyster processing b
   </div>
 </div>
 <div class="caption">
-  Wall of numbered control enclosures on the processing boat — the Raspberry Pi edge-compute stack that runs alongside the imaging system, handling environmental sensor ingestion and cloud relay.
+  Wall of numbered control enclosures on the processing boat: the Raspberry Pi edge-compute stack that runs alongside the imaging system, handling environmental sensor ingestion and cloud relay.
 </div>
 
 ### What the cameras see
 
-Each oyster goes from the reef (where it grew) through stainless steel bins, past the camera rig, and on through the rest of the processing pipeline. The bins themselves were custom-fabricated by **Dawson Metal** in 18-gauge 316 stainless steel with a perforated bottom and single-piece construction — a design choice that minimizes welds and gives the camera rig a consistent, clean, non-confounding background.
+Each oyster goes from the reef (where it grew) through stainless steel bins, past the camera rig, and on through the rest of the processing pipeline. The bins themselves were custom-fabricated by **Dawson Metal** in 18-gauge 316 stainless steel with a perforated bottom and single-piece construction, a design choice that minimizes welds and gives the camera rig a consistent, clean, non-confounding background.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0">
@@ -56,12 +56,12 @@ Each oyster goes from the reef (where it grew) through stainless steel bins, pas
   </div>
 </div>
 <div class="caption">
-  Robotic shellfish counter — multi-camera view of the harvesting platform, with oysters identified per frame.
+  Robotic shellfish counter: multi-camera view of the harvesting platform, with oysters identified per frame.
 </div>
 
-### Upstream context — the reefs
+### Upstream context: the reefs
 
-The 4-ton aluminum oyster reefs were built in-house at TechPlace (the former Brunswick Naval Air Station). Each reef has a propeller that circulates water across the stock so the oysters keep feeding even during slack tide — a design that produces a more predictable population density per harvest, which in turn keeps the CV pipeline's input distribution stable.
+The 4-ton aluminum oyster reefs were built in-house at TechPlace (the former Brunswick Naval Air Station). Each reef has a propeller that circulates water across the stock so the oysters keep feeding even during slack tide, a design that produces a more predictable population density per harvest, which in turn keeps the CV pipeline's input distribution stable.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -86,14 +86,14 @@ multi-camera frame  (high resolution, ~1,000 shellfish per frame, individuals as
 
 ## 1. Detection: Faster R-CNN with Small-Object Anchors
 
-A 2-stage detector was deliberately chosen for this problem. Single-stage detectors (YOLO-family, SSD) are faster, but their default anchor grids don't cleanly cover the 2×2-pixel regime, and the dense small-object regime here is precisely where the region-proposal stage of Faster R-CNN pays off:
+We chose a 2-stage detector for this problem. Single-stage detectors (YOLO-family, SSD) are faster, but their default anchor grids don't cleanly cover the 2×2-pixel regime, and the dense small-object regime here is where the region-proposal stage of Faster R-CNN pays off:
 
 - The **Region Proposal Network** can be configured with anchor scales / aspect ratios that match the actual size distribution of shellfish in the frame (heavily skewed to the small end).
 - The **two-stage cascade** means small candidate boxes get a second pass of classification + regression, which is more forgiving on edge-case detections than a single feed-forward pass.
 
 ## 2. Small-Object Post-Processing
 
-The smallest detections (~2×2 px) are inherently noisy — at that scale a few pixels of motion blur, shadow, or sensor noise can produce a spurious box or merge two adjacent shellfish into one. A **custom post-processing pass** runs after Faster R-CNN's output:
+The smallest detections (~2×2 px) are noisy: at that scale a few pixels of motion blur, shadow, or sensor noise can produce a spurious box or merge two adjacent shellfish into one. A **custom post-processing pass** runs after Faster R-CNN's output:
 
 - Per-detection confidence filtering with a scale-dependent threshold.
 - Small-box NMS variant tuned for the dense-cluster regime (where default IoU NMS would over-suppress adjacent legitimate detections).
@@ -106,7 +106,7 @@ The platform requires per-frame inference at **0.125 s** (~8 FPS) to keep pace w
 ## 4. Evaluation
 
 - **Detection metrics:** classification cross-entropy, bounding-box L1/L2 regression error.
-- **End-to-end metric:** **absolute counting error** vs. human ground-truth counts on held-out frames — this is the metric the downstream operations team actually cares about, since the goal is total count per harvest run.
+- **End-to-end metric:** **absolute counting error** vs. human ground-truth counts on held-out frames. This is the metric the downstream operations team cares about, since the goal is total count per harvest run.
 
 ## Stack
 
@@ -115,7 +115,7 @@ The platform requires per-frame inference at **0.125 s** (~8 FPS) to keep pace w
 - **Edge platform:** processing-boat hardware includes a distributed Raspberry Pi sensor + compute layer (environmental telemetry to cloud); the CV inference is the higher-compute consumer on this stack.
 - **Fabrication:** custom 60 ft × 24 ft aluminum catamaran with two 11 ft × 36 ft floating oyster reefs (in-house, Brunswick Naval Air Station / TechPlace); Dawson Metal 316 stainless-steel growth bins.
 
-## Sources
+## Related Sources
 
-- 📰 [How a Half-Dozen Raspberry Pis Help Keep This Maine Oyster Farm Afloat](https://www.pcmag.com/news/how-a-half-dozen-raspberry-pis-help-keep-this-maine-oyster-farm-afloat) — PCMag, 2020. Context on Running Tide's processing boat, reef design, and Raspberry Pi-based sensor stack.
-- 🏭 [Dawson Metal — Shellfish Bins case study](https://www.dawsonmetal.com/case-studies/shellfish-bins) — fabrication details for the 18ga 316 stainless steel oyster bins that flow through the imaging platform.
+- 📰 [How a Half-Dozen Raspberry Pis Help Keep This Maine Oyster Farm Afloat](https://www.pcmag.com/news/how-a-half-dozen-raspberry-pis-help-keep-this-maine-oyster-farm-afloat): PCMag, 2020. Context on Running Tide's processing boat, reef design, and Raspberry Pi-based sensor stack.
+- 🏭 [Dawson Metal: Shellfish Bins case study](https://www.dawsonmetal.com/case-studies/shellfish-bins): fabrication details for the 18ga 316 stainless steel oyster bins that flow through the imaging platform.

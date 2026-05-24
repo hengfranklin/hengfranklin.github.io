@@ -13,7 +13,7 @@ role: CV Scientist · UCSF Abbasi Lab
 
 ## Overview
 
-A signal-processing pipeline for decoding attentional engagement from raw 64-channel EEG. The chain runs from per-channel time-series → time-frequency spectrograms via Morlet wavelet transform → **non-negative matrix factorization (NMF)** that decomposes the spectrograms into a small set of additive pattern–coefficient pairs whose coefficient vectors map directly back onto scalp topography. The same factorization is then re-used as a cross-validated classifier — given a held-out trial, solve for its coefficient vector under the learned pattern dictionary and classify by correlation similarity.
+A signal-processing pipeline for decoding attentional engagement from raw 64-channel EEG. The chain runs from per-channel time-series → time-frequency spectrograms via Morlet wavelet transform → **non-negative matrix factorization (NMF)** that decomposes the spectrograms into a small set of additive pattern–coefficient pairs whose coefficient vectors map directly back onto scalp topography. The same factorization is then re-used as a cross-validated classifier: given a held-out trial, solve for its coefficient vector under the learned pattern dictionary and classify by correlation similarity.
 
 ## Pipeline
 
@@ -23,7 +23,7 @@ A signal-processing pipeline for decoding attentional engagement from raw 64-cha
   → trial-label split: Engaged vs. Non-Engaged
   → per-trial, per-channel Morlet wavelet transform → time-frequency spectrograms
   → per-class NMF:  X  ≈  W · H   (additive, non-negative)
-        H = principal patterns  (17758 × 16 — time × frequency × channel features)
+        H = principal patterns  (17758 × 16: time × frequency × channel features)
         W = coefficients per trial  (16 × 128)
   → coefficient sorting by time / frequency
   → coefficient → scalp topography mapping (per-pattern, per-class)
@@ -60,11 +60,11 @@ A signal-processing pipeline for decoding attentional engagement from raw 64-cha
 
 ## 2. Preprocessing
 
-A global intensity threshold removes high-amplitude artifacts (movement, electrode pop) before any time-frequency analysis. Trials are then split by label into two parallel streams (Engaged / Non-Engaged) that are factorized independently — keeping the per-class structure visible in the decomposed patterns rather than washed out by an aggregated fit.
+A global intensity threshold removes high-amplitude artifacts (movement, electrode pop) before any time-frequency analysis. Trials are then split by label into two parallel streams (Engaged / Non-Engaged) that are factorized independently, keeping the per-class structure visible in the decomposed patterns rather than washed out by an aggregated fit.
 
 ## 3. Morlet Wavelet Transform
 
-Each per-channel, per-trial time series is mapped to a **time-frequency spectrogram** via continuous wavelet transform with a **Morlet (complex Gaussian-modulated sinusoid)** mother wavelet. Morlet was chosen because it gives a tunable joint time-frequency localization: narrow Gaussian envelope = sharp temporal events; wider envelope = better frequency resolution. EEG engagement signatures live across multiple bands (alpha, beta, theta) with onsets at different latencies, so a wavelet basis is better suited than a fixed-window STFT.
+Each per-channel, per-trial time series is mapped to a **time-frequency spectrogram** via continuous wavelet transform with a **Morlet (complex Gaussian-modulated sinusoid)** mother wavelet. Morlet was chosen because it gives a tunable joint time-frequency localization: narrow Gaussian envelope = sharp temporal events; wider envelope = better frequency resolution. EEG engagement signatures live across multiple bands (alpha, beta, theta) with onsets at different latencies, so a wavelet basis fits better than a fixed-window STFT.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -72,7 +72,7 @@ Each per-channel, per-trial time series is mapped to a **time-frequency spectrog
   </div>
 </div>
 <div class="caption">
-  Morlet wavelet — a complex sinusoid modulated by a Gaussian envelope. Time-frequency localization is set by the envelope's width parameter.
+  Morlet wavelet: a complex sinusoid modulated by a Gaussian envelope. Time-frequency localization is set by the envelope's width parameter.
 </div>
 
 <div class="row">
@@ -94,7 +94,7 @@ X  ≈  W · H,    W ≥ 0,   H ≥ 0
 
 where `H` (`17758 × 16`) holds **16 principal time-frequency-channel patterns** as rows and `W` (`16 × 128`) gives the **per-trial coefficient weights** for combining those patterns. Rank `k = 16` was the dictionary size used.
 
-NMF was chosen over PCA or ICA because its **additive, non-negative** constraint produces parts-based decompositions that align with how power spectra physically combine, and the resulting coefficient vectors are directly interpretable as "how strongly does pattern P_i express in this trial" — which is what the downstream scalp-topography mapping needs.
+NMF was chosen over PCA or ICA because its **additive, non-negative** constraint produces parts-based decompositions that align with how power spectra physically combine, and the resulting coefficient vectors are directly interpretable as "how strongly does pattern P_i express in this trial", which is what the downstream scalp-topography mapping needs.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -107,7 +107,7 @@ NMF was chosen over PCA or ICA because its **additive, non-negative** constraint
 
 ### Reconstruction fidelity
 
-Across the dictionary, NMF reconstructions match the original spectrograms with **average correlation 0.99** — confirming that 16 patterns are sufficient to capture the dominant structure in the time-frequency representation.
+Across the dictionary, NMF reconstructions match the original spectrograms with **average correlation 0.99**, confirming that 16 patterns are sufficient to capture the dominant structure in the time-frequency representation.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -135,7 +135,7 @@ Across the dictionary, NMF reconstructions match the original spectrograms with 
   </div>
 </div>
 <div class="caption">
-  Coefficient strip — Engaged trials. Each column is a trial; row intensity is the strength of pattern <code>P_i</code> in that trial.
+  Coefficient strip, Engaged trials. Each column is a trial; row intensity is the strength of pattern <code>P_i</code> in that trial.
 </div>
 
 <div class="row">
@@ -144,12 +144,12 @@ Across the dictionary, NMF reconstructions match the original spectrograms with 
   </div>
 </div>
 <div class="caption">
-  Coefficient strip — Non-Engaged trials.
+  Coefficient strip, Non-Engaged trials.
 </div>
 
 ## 5. Coefficient Analysis (Scalp Topography)
 
-The factorization produces 16 patterns per class, each with a corresponding coefficient distribution over 64 electrodes. Plotting each pattern's coefficients in scalp coordinates produces a **topography map** that exposes which brain regions activate that pattern — a key advantage of NMF over latent decompositions whose components have no direct spatial interpretation.
+The factorization produces 16 patterns per class, each with a corresponding coefficient distribution over 64 electrodes. Plotting each pattern's coefficients in scalp coordinates produces a **topography map** that exposes which brain regions activate that pattern, a key advantage of NMF over latent decompositions whose components have no direct spatial interpretation.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -188,16 +188,16 @@ The same NMF basis doubles as a classifier. 5-fold cross-validation:
 | 5 | 0.37 | 0.50 |
 | **Average** | **0.58 ± 0.16** | **0.42 ± 0.25** |
 
-Non-Engaged accuracy is both lower and higher-variance than Engaged — consistent with the class imbalance in the dataset, which is dominated by Engaged trials.
+Non-Engaged accuracy is both lower and higher-variance than Engaged, consistent with the class imbalance in the dataset, which is dominated by Engaged trials.
 
 ## 8. Future Work
 
 Items flagged in the slide deck as planned follow-ups:
 
-- **Multi-patient analysis** — generalize the per-class factorization across subjects.
-- **Class imbalance** — adjust for the engagement-dominant sampling (re-sampling, weighted losses, focal NMF objectives).
-- **Stronger classifier head** — replace correlation similarity with a regression or neural-net head trained on `W'` features.
-- **Response-time regression** — predict per-trial response time from the same coefficient features.
+- **Multi-patient analysis:** generalize the per-class factorization across subjects.
+- **Class imbalance:** adjust for the engagement-dominant sampling (re-sampling, weighted losses, focal NMF objectives).
+- **Stronger classifier head:** replace correlation similarity with a regression or neural-net head trained on `W'` features.
+- **Response-time regression:** predict per-trial response time from the same coefficient features.
 
 ## Stack
 
@@ -209,4 +209,4 @@ Items flagged in the slide deck as planned follow-ups:
 
 ## Links
 
-📄 Internal lab work (UCSF Abbasi Lab) — slide deck on file.
+📄 Internal lab work (UCSF Abbasi Lab): slide deck on file.

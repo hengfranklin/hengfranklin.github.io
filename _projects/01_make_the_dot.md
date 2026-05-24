@@ -14,7 +14,7 @@ role: Applied ML Engineer · Make The Dot
 
 ## Overview
 
-Make The Dot is an AI apparel design system that turns a designer sketch, a target color, and a text prompt into a photorealistic garment render in seconds. The work covered the GPU inference stack, the LoRA training pipeline, and the MLOps integration that ships new washes to production with zero downtime.
+Make The Dot is an AI apparel design system that turns a designer sketch, a target color, and a text prompt into a photorealistic garment render in seconds. I owned the GPU inference stack, the LoRA training pipeline, and the MLOps integration that ships new washes to production with zero downtime.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -65,7 +65,7 @@ Instead of requiring the client to precompute multiple control maps, the GPU wor
 - **Canny edges:** generated with `controlnet_aux.CannyDetector`, thresholds 50 and 100.
 - **Depth map:** generated with ZoeDepth from lllyasviel Annotators.
 
-All three feed one ControlNet-Union model with per-modality scales, approximately `[0.3, 0.25, 0.6]` for scribble, Canny, and depth. One model and one forward pass are significantly cheaper than stacking three separate ControlNets.
+All three feed one ControlNet-Union model with per-modality scales, approximately `[0.3, 0.25, 0.6]` for scribble, Canny, and depth. One model and one forward pass are cheaper than stacking three separate ControlNets.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">

@@ -13,7 +13,7 @@ role: CV Scientist · UCSF Fahy Lab
 
 ## Overview
 
-A computer-vision pipeline for chest CT that converts sparse radiologist annotations into a dense, quantitative description of every mucus plug in the lung — segmented in 3D, localized to a specific airway branch and generation, and reduced to interpretable measures of plug burden and predicted airflow obstruction. The pipeline output drives the **Quantitative Assessment of Airway Mucus Plug Pathology (qAAMP)** framework published in *JCI Insight*.
+A computer-vision pipeline for chest CT that converts sparse radiologist annotations into a dense, quantitative description of every mucus plug in the lung: segmented in 3D, localized to a specific airway branch and generation, and reduced to interpretable measures of plug burden and predicted airflow obstruction. The pipeline output drives the **Quantitative Assessment of Airway Mucus Plug Pathology (qAAMP)** framework published in *JCI Insight*.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -101,8 +101,8 @@ The clinical interpretation of a plug depends entirely on *where* in the airway 
 
 - **Lobar parenchyma** segmented per lobe with an established open-source method (one label per lobe).
 - **Airway lumen** segmented by combining two methods and taking the voxel-wise union, then keeping the largest connected component:
-  - **Region-growing** from a trachea seed — high precision on central airways, drops out in small branches.
-  - **CNN-based segmentation** — better recall on small airways than region growing alone.
+  - **Region-growing** from a trachea seed: high precision on central airways, drops out in small branches.
+  - **CNN-based segmentation**: better recall on small airways than region growing alone.
 
 ### Centerline + topology graph
 
@@ -115,7 +115,7 @@ The airway segmentation is **skeletonized** to a centerline, then converted into
 - lobe assignment
 - child-branch connectivity
 
-**Airway termination points** are the most distal centerline nodes with no children — the locations downstream of which a plug occludes flow.
+**Airway termination points** are the most distal centerline nodes with no children: the locations downstream of which a plug occludes flow.
 
 ### Per-plug airway localization
 
@@ -139,7 +139,7 @@ The per-plug length distribution across the cohort is fit with a **Gaussian mixt
 
 ## 6. Anatomic Distribution
 
-Plugging the per-plug `(generation, lobe)` tuples back into the airway tree produces a per-patient **airway mucus plug map**. Across the cohort, plugs concentrate in airway **generations 6–9** — typically 2–4 mm diameter.
+Plugging the per-plug `(generation, lobe)` tuples back into the airway tree produces a per-patient **airway mucus plug map**. Across the cohort, plugs concentrate in airway **generations 6–9**, typically 2–4 mm diameter.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -170,7 +170,7 @@ The pipeline failed to converge on RS for 3 of 97 scans (~3%); test–retest rep
 
 ## 8. Obstructed Lung Volume Percentage (OLVP)
 
-Rather than going through a flow model, OLVP estimates how much of the *lung volume* sits behind a plugged airway. The pipeline performs a per-lobe nearest-airway-termination-point assignment for every parenchymal voxel — essentially a Voronoi partition over termination points constrained within a lobe (the per-lobe constraint prevents voxels from being assigned across a fissure).
+Rather than going through a flow model, OLVP estimates how much of the *lung volume* sits behind a plugged airway. The pipeline performs a per-lobe nearest-airway-termination-point assignment for every parenchymal voxel: a Voronoi partition over termination points constrained within a lobe (the per-lobe constraint prevents voxels from being assigned across a fissure).
 
 - A subregion is labeled **obstructed** if its terminal airway has a plug.
 - Per lobe: `OLVP = 100 · V_obstructed / V_lobe`
@@ -207,7 +207,7 @@ For 43 patients with paired baseline + year-3 scans, plugs are matched across ti
 
 ## 10. Validation Against Lung Function
 
-The downstream check: do the pipeline-derived measures actually correlate with patient lung function? Plug counts stratified by generation (using the airway-localization output of §4) correlate negatively with FEV₁ and FEF25–75 — and the effect is concentrated in **proximal plugs (generation ≤ 7)**.
+The downstream check: do the pipeline-derived measures actually correlate with patient lung function? Plug counts stratified by generation (using the airway-localization output of §4) correlate negatively with FEV₁ and FEF25–75, and the effect is concentrated in **proximal plugs (generation ≤ 7)**.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -231,7 +231,7 @@ The same effect surfaces in the per-plug Resistance Score (RS-per-plug): each pr
 
 ## qAAMP Output Bundle
 
-The pipeline's per-scan output is bundled as the **Quantitative Assessment of Airway Mucus Plug Pathology (qAAMP)** — a structured set of CT-derived biomarkers ready for use as clinical-trial endpoints:
+The pipeline's per-scan output is bundled as the **Quantitative Assessment of Airway Mucus Plug Pathology (qAAMP)**: a structured set of CT-derived biomarkers ready for use as clinical-trial endpoints:
 
 | Category | Metrics |
 |---|---|

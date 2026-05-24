@@ -13,7 +13,7 @@ role: CV Scientist · UCSF Sohn Lab
 
 ## Overview
 
-Non-contrast head CT carries far more information than the handful of biomarkers extracted in routine radiology reads. The perceived "age" of a brain on CT is one such latent signal — anecdotally tied to a patient's medico-social and genetic history, but historically too weak and too subjective to act on. This project trains a **3D convolutional neural network** to predict brain age objectively from non-contrast CT, then uses the **perceived-to-actual age discrepancy (PTAD)** as a single per-patient feature to predict a panel of systemic diseases and conditions.
+Non-contrast head CT carries far more information than the handful of biomarkers extracted in routine radiology reads. The perceived "age" of a brain on CT is one such latent signal, anecdotally tied to a patient's medico-social and genetic history but historically too weak and too subjective to act on. This project trains a **3D convolutional neural network** to predict brain age objectively from non-contrast CT, then uses the **perceived-to-actual age discrepancy (PTAD)** as a single per-patient feature to predict a panel of systemic diseases and conditions.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -26,7 +26,7 @@ Non-contrast head CT carries far more information than the handful of biomarkers
 
 ## Motivation
 
-Numerous hidden imaging biomarkers live in head CT, but only a handful are routinely extracted in clinical practice. Perceived brain age on CT is widely variable across patients and has long been described, informally, as tracking with medico-social and genetic history. Existing manual or semi-quantitative biomarkers for this signal are weak-to-moderate at best and rarely operationalized. The goal here is to (1) train a CNN that objectively estimates perceived brain age from non-contrast CT, and (2) use the residual between predicted and actual age — the PTAD — as a compact biomarker for systemic disease prediction.
+Numerous hidden imaging biomarkers live in head CT, but only a handful are routinely extracted in clinical practice. Perceived brain age on CT is widely variable across patients and has long been described, informally, as tracking with medico-social and genetic history. Existing manual or semi-quantitative biomarkers for this signal are weak-to-moderate at best and rarely operationalized. The goal here is to (1) train a CNN that objectively estimates perceived brain age from non-contrast CT, and (2) use the residual between predicted and actual age (the PTAD) as a compact biomarker for systemic disease prediction.
 
 ## Pipeline
 
@@ -62,16 +62,16 @@ A standard in-house preprocessing pipeline is applied to every study before it r
 
 ## 3. 3D CNN Brain Age Regression
 
-A **custom 3D convolutional neural network** is trained as a regressor (continuous age in years, not a classifier).
+A **custom 3D convolutional neural network** is trained as a regressor over continuous age in years.
 
 - **Architecture:** custom 3D CNN with **two fully connected layers** at the head and **heavy regularization** throughout.
 - **Loss:** **mean absolute error (MAE)** between predicted age and chronological age. MAE is preferred over MSE here because the per-patient residual itself (PTAD) is the downstream feature, and MAE training produces residuals on the same scale as the target.
-- **Output:** a single scalar — predicted brain age per study.
+- **Output:** a single scalar, predicted brain age per study.
 - **Per-patient feature:** `PTAD = predicted_age − actual_age`. Positive PTAD = brain looks older than the patient; negative PTAD = brain looks younger.
 
 ## 4. Statistical Modeling: PTAD → Disease Panel
 
-Once a PTAD value exists per patient, the relationship between PTAD and systemic conditions is modeled with a **generalized linear model (GLM) with a logit link function** — i.e. logistic regression — run in two modes:
+Once a PTAD value exists per patient, the relationship between PTAD and systemic conditions is modeled with a **generalized linear model (GLM) with a logit link function** (i.e. logistic regression), run in two modes:
 
 - **Univariate analysis:** PTAD as the sole predictor of each condition, one model per condition.
 - **Multivariate analysis:** PTAD alongside other available patient covariates, to assess whether PTAD carries information independent of standard risk factors.
@@ -86,7 +86,7 @@ Conditions evaluated:
 
 ## Clinical Relevance
 
-A deep-learning-based PTAD on brain CT successfully predicts a panel of systemic diseases and conditions. More broadly, multiple data-driven imaging biomarkers can be extracted from non-contrast brain CT to predict systemic disease — a useful adjunct to the standard radiological interpretation, surfacing signal that is present in the scan but not currently part of the routine read.
+A deep-learning-based PTAD on brain CT successfully predicts a panel of systemic diseases and conditions. More broadly, multiple data-driven imaging biomarkers can be extracted from non-contrast brain CT to predict systemic disease, a useful adjunct to the standard radiological interpretation that surfaces signal present in the scan but not currently part of the routine read.
 
 ## Stack
 

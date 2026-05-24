@@ -13,7 +13,7 @@ role: CV Researcher · UC Berkeley
 
 ## Overview
 
-A computer-vision pipeline for measuring stem width of biofuel plants (corn and sorghum) directly in the field, from RGB + depth images captured by a stereo camera mounted on a mobile robot traversing rows. The system isolates individual stems with a CNN detector, models each stem's boundary with classical edge processing + RANSAC line fits, filters out low-confidence cases, and converts pixel width to metric width using paired depth data — designed to characterize stem-width distributions per plot (genetic strain) at scale.
+A computer-vision pipeline for measuring stem width of biofuel plants (corn and sorghum) directly in the field, from RGB + depth images captured by a stereo camera mounted on a mobile robot traversing rows. The system isolates individual stems with a CNN detector, models each stem's boundary with classical edge processing + RANSAC line fits, filters out low-confidence cases, and converts pixel width to metric width using paired depth data. The system is designed to characterize stem-width distributions per plot (genetic strain) at scale.
 
 ## Publication
 
@@ -21,7 +21,7 @@ A computer-vision pipeline for measuring stem width of biofuel plants (corn and 
 
 ## Sensor Setup
 
-The capture rig is an **Intel RealSense R200** stereo camera (RGB + IR + stereoscopic depth) mounted on a wheeled robot that traverses the 75 cm gap between two crop rows of a 3 m × 3 m plot containing ~50 plants of one genetic strain. RGB + depth frames are captured at a fixed rate as the robot moves. Each plot is one genotype — the downstream goal is a per-plot **histogram of stem widths**, not per-plant tracking, so the pipeline favors high precision per estimate over perfect recall.
+The capture rig is an **Intel RealSense R200** stereo camera (RGB + IR + stereoscopic depth) mounted on a wheeled robot that traverses the 75 cm gap between two crop rows of a 3 m × 3 m plot containing ~50 plants of one genetic strain. RGB + depth frames are captured at a fixed rate as the robot moves. Each plot is one genotype, and the downstream goal is a per-plot **histogram of stem widths**, so the pipeline favors high precision per estimate over perfect recall.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -54,7 +54,7 @@ Depth frame ─┘    (Faster R-CNN)     (Wiener + Canny             (fine morph
 
 ## 1. Stem Detection (Faster R-CNN)
 
-Each RGB frame may contain several stems plus heavy leaf clutter. **Faster R-CNN with ResNet-101** (fine-tuned from a pretrained checkpoint on **2,000 hand-labeled corn + sorghum images**) proposes bounding boxes around individual stems with associated confidence scores. The detector's two-stage design — region proposal network + classifier — gives clean per-stem crops despite the dense, overlapping leaves in plot imagery.
+Each RGB frame may contain several stems plus heavy leaf clutter. **Faster R-CNN with ResNet-101** (fine-tuned from a pretrained checkpoint on **2,000 hand-labeled corn + sorghum images**) proposes bounding boxes around individual stems with associated confidence scores. The detector's two-stage design (region proposal network + classifier) gives clean per-stem crops despite the dense, overlapping leaves in plot imagery.
 
 Each detection produces a cropped RGB patch and the matching cropped depth patch, which both flow into the rest of the pipeline. Frame-to-frame stem tracking is deliberately skipped: because the same stem may appear in adjacent frames, duplicate detections exist, but for the per-plot histogram goal those duplicates do not bias the mean stem-width estimate appreciably.
 
@@ -85,7 +85,7 @@ Within each stem crop, the algorithm needs a stable estimate of the stem's cente
 </div>
 
 4. **Coarse morphological closing** on the binary edge image with a large `30 × 15` rectangular structuring element to extract big structures and suppress small leaf fragments.
-5. **Connected-component selection** of the dominant stem region. Each candidate is scored by a weighted average of three features — area, distance from image center, and angular alignment to vertical — under the prior that the stem is the largest near-vertical structure near the center of the crop. The highest-scoring component is taken as the stem.
+5. **Connected-component selection** of the dominant stem region. Each candidate is scored by a weighted average of three features (area, distance from image center, and angular alignment to vertical) under the prior that the stem is the largest near-vertical structure near the center of the crop. The highest-scoring component is taken as the stem.
 6. The selected component's **principal orientation** gives the stem's major axis line.
 
 <div class="row">
@@ -110,7 +110,7 @@ Coarse morphology was tuned to find the stem; for the actual boundary, a **finer
   <b>Figure 6.</b> (a) Canny edge profile along the stem region. (b) After fine-resolution morphological closing. (c) Perpendicular probe lines along the major axis.
 </div>
 
-Each side's candidate points typically include outliers from leaves and occluders. **RANSAC** is run independently on the left and right point sets — fitting a line per side and rejecting outliers — because corn and sorghum stems are essentially straight over the visible segment. RANSAC was chosen over a Hough transform for both speed and accuracy on noisy line-fitting tasks of this kind (cited in the paper).
+Each side's candidate points typically include outliers from leaves and occluders. **RANSAC** is run independently on the left and right point sets, fitting a line per side and rejecting outliers, because corn and sorghum stems are essentially straight over the visible segment. RANSAC was chosen over a Hough transform for both speed and accuracy on noisy line-fitting tasks of this kind (cited in the paper).
 
 ```
 pixel_width = mean( perpendicular distance between the two RANSAC lines )
@@ -140,7 +140,7 @@ Real stems should have **near-parallel sides**. The angle between the two RANSAC
 
 ## 5. Metric Width Estimation
 
-Converting pixel width to metric width requires (i) the camera's focal length, (ii) the per-pixel depth to the stem, and (iii) an aligned RGB-depth pair. In practice, the RealSense RGB and depth streams are offset on the sensor and the offset varies with robot speed, so a **manual constant shift** is applied per dataset to register depth onto RGB.
+Converting pixel width to metric width requires (i) the camera's focal length, (ii) the per-pixel depth to the stem, and (iii) an aligned RGB-depth pair. The RealSense RGB and depth streams are offset on the sensor and the offset varies with robot speed, so a **manual constant shift** is applied per dataset to register depth onto RGB.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -193,13 +193,13 @@ Two evaluation datasets:
 | Phantom sorghum | Pixel | 149 / 390 (manually matched: 241) | 62% | **14.7%** |
 | Phantom sorghum | Metric | 149 / 390 | 62% | **13.2%** |
 
-The discard rate is high by design — the confidence filter is aggressive. Even on Plant 2 in the phantom sorghum dataset, where only **1 of 33** detections survived the filter, that single estimate was accurate, supporting the design choice that per-plot histograms tolerate aggressive filtering.
+The discard rate is high by design: the confidence filter is aggressive. Even on Plant 2 in the phantom sorghum dataset, where only **1 of 33** detections survived the filter, that single estimate was accurate, supporting the design choice that per-plot histograms tolerate aggressive filtering.
 
-A notable result: most of the residual error sits in **pixel-width estimation**, not depth conversion. Comparison against the per-stem ground-truth variability (4–8% variation along the same stem from caliper measurements) suggests a significant fraction of pipeline error is at the floor of physical measurement noise.
+A notable result: most of the residual error sits in **pixel-width estimation**. Comparison against the per-stem ground-truth variability (4–8% variation along the same stem from caliper measurements) suggests a significant fraction of pipeline error is at the floor of physical measurement noise.
 
 ## 8. Failure Modes
 
-The dominant failure mode is **major-axis misestimation under heavy leaf occlusion** — when a leaf covers a large fraction of the stem in the detection crop, coarse morphological closing keeps the leaf as the dominant connected component and the axis is fit to the wrong structure.
+The dominant failure mode is **major-axis misestimation under heavy leaf occlusion**: when a leaf covers a large fraction of the stem in the detection crop, coarse morphological closing keeps the leaf as the dominant connected component and the axis is fit to the wrong structure.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -207,7 +207,7 @@ The dominant failure mode is **major-axis misestimation under heavy leaf occlusi
   </div>
 </div>
 <div class="caption">
-  <b>Figure 12.</b> Plant 2 with an occluding leaf on the right side, and its coarse morphological representation — the leaf is selected as the dominant structure, corrupting axis estimation.
+  <b>Figure 12.</b> Plant 2 with an occluding leaf on the right side, and its coarse morphological representation. The leaf is selected as the dominant structure, corrupting axis estimation.
 </div>
 
 The paper flags two natural extensions: (i) replace the classical edge + morphology boundary modeling with a **learned segmentation network**, and (ii) replace manual RGB-depth shift with **automated alignment**.
