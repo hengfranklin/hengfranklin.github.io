@@ -18,7 +18,7 @@ ninja.data = [{
           },
         },{id: "nav-publications",
           title: "publications",
-          description: "Selected publications and patents in reverse chronological order.",
+          description: "Peer-reviewed papers, patents, and conference abstracts in reverse chronological order. Toggle between Publications and Abstracts below.",
           section: "Navigation",
           handler: () => {
             window.location.href = "/publications/";
@@ -57,7 +57,7 @@ ninja.data = [{
               window.location.href = "/projects/09_breathily/";
             },},{id: "projects-carbon-sink-rate-tracking",
           title: 'Carbon sink rate tracking',
-          description: "Computer vision pipeline that turns underwater imagery from custom ocean satellite buoys into per-batch sink rate curves for carbon verification. Frame quality filtering, instance segmentation of biomaterial, area-over-time decay fitting.",
+          description: "Computer vision pipeline that turns underwater imagery from custom ocean satellite buoys into per-batch sink rate equations for carbon verification. Frame quality filtering, instance segmentation of biomaterial, floating-vs-sinking classification by segmentation midpoint, exponential decay fitting.",
           section: "Projects",handler: () => {
               window.location.href = "/projects/06_running_tide_sink/";
             },},{id: "projects-robotic-shellfish-counter",
@@ -85,7 +85,7 @@ ninja.data = [{
         title: 'CV',
         section: 'Socials',
         handler: () => {
-          window.open("/assets/pdf/franklin_heng_resume.pdf", "_blank");
+          window.open("/cv/", "_blank");
         },
       },{
         id: 'social-email',
