@@ -20,7 +20,7 @@ latest_posts:
 
 I'm a computer vision / ML engineer based in NYC. I've built solutions across healthcare, climate, and robotics.
 
-I chose to study computer science after reading an article on neuroprosthetics. It reminded me of my grandmother, who was half paralyzed after a stroke, and I decided I wanted to build technology that helps people like her.
+I initially chose to study computer science after reading an article on neuroprosthetics. It reminded me of my grandmother, who was half paralyzed after a stroke, and I decided I wanted to build technology that connects with people and society in a positive way.
 
 After college, I worked at UCSF, applying computer vision to [medical images](/projects/10_mucus_plug/) and published a [paper](https://insight.jci.org/articles/view/174124). I later co-founded [Breathily](/projects/09_breathily/), a device that makes lung function testing more accessible for patients with physical disabilities. Afterwards, I was the dedicated CV engineer at [Running Tide](https://runningtidexmason.webflow.io/), an ocean-based carbon removal startup, working on [macroalgae phenotyping](/projects/04_kelp_3d/) and [underwater tracking of biomaterials](/projects/06_running_tide_sink/). Most recently, I joined [Make The Dot](/projects/01_make_the_dot/), working on Stable Diffusion pipelines and MLOps.
 
