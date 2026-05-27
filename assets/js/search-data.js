@@ -67,7 +67,7 @@ ninja.data = [{
               window.location.href = "/projects/07_shellfish/";
             },},{id: "projects-kelp-phenotyping",
           title: 'Kelp phenotyping',
-          description: "Two generations of computer vision for measuring harvested kelp blades. Overhead 2D imaging of whole plants, then multi-view 3D reconstruction of individual blades.",
+          description: "Two generations of computer vision for measuring harvested kelp blades. V2 reconstructs individual blades in 3D through frame extraction, color correction, blade masking, COLMAP structure from motion, ArUco metric scaling, and convex-hull and bounding-box measurement. V1 measures whole plants in 2D with Faster R-CNN detection.",
           section: "Projects",handler: () => {
               window.location.href = "/projects/04_kelp_3d/";
             },},{id: "projects-make-the-dot",
