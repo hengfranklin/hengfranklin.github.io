@@ -173,9 +173,28 @@ We generate `DICT_5X5_50` markers and fix them in the scene, and detect them wit
   A generated 5×5 ArUco tag, and markers detected on the rig. Because the physical marker size is known, ray intersection across views recovers an absolute metric scale for the otherwise scale-ambiguous reconstruction.
 </div>
 
-## 6. Photorealistic Rendering with Metashape (Experimental)
+## 6. Photorealistic Rendering with Metashape
 
-The measurement geometry came from the COLMAP reconstruction. Separately, we experimented with Agisoft Metashape as a platform for producing photorealistic 3D model renders of the blades, through its dense multi-view stereo and texturing. This was an exploratory path for visualization and sat outside the production measurement pipeline, so its render outputs are not shown here. COLMAP anchored production because it is open source and scriptable, and Metashape offered higher-quality textured surfaces through its own licensed interface for presentation-quality models.
+The measurement geometry came from the COLMAP reconstruction. Separately, we used Agisoft Metashape to produce photorealistic 3D renders through its dense multi-view stereo and texturing. COLMAP anchored production because it is open source and scriptable, and Metashape offered higher-quality textured surfaces through its own licensed interface for presentation-quality models.
+
+We modeled two things in Metashape: individual harvested blades, and the mycelium-buoy growth assemblies we deployed offshore. Kelp is normally farmed on fixed lines in shallow coastal water. Running Tide grew kelp on free-floating mycelium buoys in the open ocean, an approach that had not been run at scale before. The textured models give us a visual record of the buoy and seedline configurations alongside the per-blade phenotype work.
+
+<div class="row">
+  <div class="col-sm-4 mt-3 mt-md-0 text-center">
+    <iframe title="Single Sugar Kelp" src="https://sketchfab.com/models/add8169dc08b43b491ec6952cb5fe7ee/embed" frameborder="0" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen loading="lazy" style="width: 100%; height: 320px;" class="rounded z-depth-1"></iframe>
+  </div>
+  <div class="col-sm-4 mt-3 mt-md-0 text-center">
+    <iframe title="Mycelium Buoy + Kelp" src="https://sketchfab.com/models/6ddb003ac1f845639e56cbc2181456dc/embed" frameborder="0" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen loading="lazy" style="width: 100%; height: 320px;" class="rounded z-depth-1"></iframe>
+  </div>
+  <div class="col-sm-4 mt-3 mt-md-0 text-center">
+    <iframe title="Buoy + Seedline" src="https://sketchfab.com/models/4951e53a309540abba2e35312f626b67/embed" frameborder="0" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen loading="lazy" style="width: 100%; height: 320px;" class="rounded z-depth-1"></iframe>
+  </div>
+</div>
+<div class="caption">
+  Interactive Metashape renders. Left: a single harvested sugar kelp blade. Middle: a mycelium buoy with attached kelp. Right: a buoy with kelp seedlines. Drag to rotate, scroll to zoom.
+</div>
+
+More renders on [my Sketchfab profile](https://sketchfab.com/franklinheng/models).
 
 ## 7. Geometry and Measurement
 
