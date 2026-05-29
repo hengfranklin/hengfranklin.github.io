@@ -10,6 +10,9 @@ featured: true
 date: 2022-09-01
 date_display: 2022 – 2024
 role: Computer Vision Engineer · Running Tide
+mermaid:
+  enabled: true
+  zoomable: true
 ---
 
 ## Overview
@@ -72,6 +75,20 @@ video from LUCID camera (.avi)
   (experimental side path: Metashape dense MVS + texturing for photorealistic renders)
 ```
 
+The same flow as a diagram:
+
+```mermaid
+graph LR
+  V[".avi from<br/>LUCID camera"] --> F["Frame extract<br/>+ color correct"]
+  F --> M["Blade masking<br/>Otsu + contour"]
+  M --> SFM["COLMAP SfM<br/>SIFT, match, map"]
+  SFM --> SP["Sparse<br/>point cloud"]
+  SP --> AR["ArUco metric<br/>scaling"]
+  AR --> O3["Open3D<br/>hull + OBB"]
+  O3 --> CSV["metrics.csv"]
+  M -.-> DM["Metashape<br/>dense MVS"]
+```
+
 The pipeline runs end to end as a `PolarBearAnalysis` class in `run_polar_bear.py`, with a development version in `automated_3d_reconstruction.ipynb`. The sections below follow the order the data moves through it.
 
 ## 1. Capture and Frame Extraction
@@ -97,9 +114,18 @@ Frame resolution is a tuning knob. We benchmarked input resolution against frame
 
 ## 2. Color Card Correction
 
-The 24-patch color card sits in every frame. Using PlantCV, we detect the card in the first frame, treat that frame as the color reference, and compute a per-frame color transformation matrix that maps every later frame onto the reference. This holds appearance steady across the capture as lighting and exposure drift.
+The 24-patch color card sits in every frame. Using PlantCV, we detect the card in the first frame, treat that frame as the color reference, and compute a per-frame color transformation matrix that maps every later frame onto the reference. Detection uses `pcv.transform.find_color_card`, the mask is built with `create_color_card_mask(radius=50, ncols=6, nrows=4)` for the 6×4 = 24 patches, and the transform is fit with `calc_transformation_matrix` and applied with `apply_transformation_matrix`. This holds appearance steady across the capture as lighting and exposure drift.
 
-Color correction is gated behind a flag and is most useful for the dense photorealistic reconstruction and any color-based biological analysis. SIFT works on grayscale and is robust to illumination, so the sparse reconstruction itself depends on it less.
+Color correction is gated behind a flag (`--color_correction 0` by default) and is most useful for the dense photorealistic reconstruction and any color-based biological analysis. SIFT works on grayscale and is robust to illumination, so the sparse reconstruction itself depends on it less.
+
+<div class="row">
+  <div class="col-sm mt-3 mt-md-0 text-center">
+    {% include figure.liquid loading="lazy" path="assets/img/projects/p10_1_card.png" class="img-fluid rounded z-depth-1 mx-auto d-block" width="auto" max-height="360px" zoomable=true %}
+  </div>
+</div>
+<div class="caption">
+  The 24-patch color calibration card hanging in the rig next to the rotating blade fixture and the ruled ArUco target, with the LUCID camera on its rail at right. The first frame's card becomes the color reference that every later frame is mapped onto.
+</div>
 
 ## 3. Background Suppression and Blade Masking
 
@@ -159,7 +185,7 @@ Moving from the development notebook to the production worker, we changed severa
 
 Structure from motion from a single moving camera recovers geometry up to an unknown global scale, so the raw reconstruction has arbitrary units. We recover absolute metric scale from an ArUco marker of known physical size.
 
-We generate `DICT_5X5_50` markers and fix them in the scene, and detect them with subpixel corner refinement (`CORNER_REFINE_SUBPIX`), which matters because corner accuracy sets scale accuracy. The `aruco_estimator` package then recovers the marker corners in 3D without searching the sparse cloud: it detects each corner in 2D in the registered images, casts a ray from each camera center through the detected corner using the pose COLMAP solved, and intersects those rays to place the corner in 3D. With the corners in 3D, it measures the reconstructed edge length, compares it to the known physical length, and scales the point cloud and camera translations by `known_size / measured_size`.
+We generate `DICT_5X5_50` markers and fix them in the scene, and detect them with subpixel corner refinement (`CORNER_REFINE_SUBPIX`), which matters because corner accuracy sets scale accuracy. The `aruco_estimator` package then recovers the marker corners in 3D without searching the sparse cloud: it detects each corner in 2D in the registered images, casts a ray from each camera center through the detected corner using the pose COLMAP solved, and finds where those rays meet by least-squares intersection of lines (`np.linalg.lstsq` / pseudo-inverse) to place the corner in 3D. With the corners in 3D, it measures the reconstructed edge length as the mean of the four neighbouring-corner distances, compares it to the known physical length, and scales the point cloud and camera translations by `known_size / measured_size`.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -228,7 +254,7 @@ We use an oriented bounding box rather than an axis-aligned one because the blad
   </div>
 </div>
 <div class="caption">
-  Left: principal axes found on the blade cloud, used to align it before fitting a box. Right: the oriented bounding box (orange) around the blade, whose extents give length, width, and thickness. With ArUco scaling, these come out in cm and the hull volume in cm³.
+  Left: the principal axes of the blade cloud that Open3D's <code>get_oriented_bounding_box()</code> uses to align the box. Right: the oriented bounding box (orange) around the blade, whose extents give length, width, and thickness. With ArUco scaling, these come out in cm and the hull volume in cm³.
 </div>
 
 ## 8. Evaluation
@@ -348,5 +374,7 @@ The final CSV schema is `image_name | buoy_name | date_harvested | height_bbox |
 
 ## Related Sources
 
-- 📂 [Repository](https://github.com/hengfranklin/kelp-phenotyping): scripts, notebooks, and rig notes for both generations.
-- 📄 [NAPPN 2022 abstract](https://www.authorea.com/users/510851/articles/588338-nappn-annual-conference-abstract-computer-vision-based-phenotyping-approaches-in-the-brown-macroalgae-saccharina-latissima): computer-vision phenotyping approaches in the brown macroalgae Saccharina latissima.
+- Repository ([github.com/hengfranklin/kelp-phenotyping](https://github.com/hengfranklin/kelp-phenotyping)): scripts, notebooks, and rig notes for both generations.
+- NAPPN 2022 abstract ([Authorea](https://www.authorea.com/users/510851/articles/588338-nappn-annual-conference-abstract-computer-vision-based-phenotyping-approaches-in-the-brown-macroalgae-saccharina-latissima)): computer-vision phenotyping approaches in the brown macroalgae Saccharina latissima.
+- COLMAP ([colmap.github.io](https://colmap.github.io/), Schönberger & Frahm, CVPR 2016): open-source structure-from-motion and multi-view stereo used for the sparse reconstruction.
+- ArUco / OpenCV `aruco` module: square fiducial markers used here for known-size metric scaling.

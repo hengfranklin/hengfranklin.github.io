@@ -9,6 +9,9 @@ affiliation: UCSF
 date: 2019-06-01
 date_display: Jun 2019 – Mar 2020
 role: CV Scientist · UCSF Fahy Lab
+mermaid:
+  enabled: true
+  zoomable: true
 ---
 
 ## Overview
@@ -26,7 +29,7 @@ A computer-vision pipeline for chest CT that converts sparse radiologist annotat
 
 ## Publication
 
-📄 Huang BK, Elicker BM, Henry TS, Kallianos KG, Hahn LD, Tang M, **Heng F**, McCulloch CE, *et al.*, Woodruff PG, Fahy JV, for the NHLBI Severe Asthma Research Program (SARP). **"Persistent mucus plugs in proximal airways are consequential for airflow limitation in asthma."** *JCI Insight* 2024;9(3):e174124. [doi.org/10.1172/jci.insight.174124](https://insight.jci.org/articles/view/174124)
+📄 Huang BK, Elicker BM, Henry TS, Kallianos KG, Hahn LD, Tang M, **Heng F**, McCulloch CE, *et al.*, Woodruff PG, Fahy JV, for the NHLBI Severe Asthma Research Program (SARP). **"Persistent mucus plugs in proximal airways are consequential for airflow limitation in asthma."** *JCI Insight* 2024;9(3):e174124 (published online Dec 2023). [doi.org/10.1172/jci.insight.174124](https://insight.jci.org/articles/view/174124)
 
 ## Pipeline
 
@@ -48,6 +51,23 @@ DICOM CT volume
   → voxel-to-airway assignment → Obstructed Lung Volume Percentage (OLVP)
   → longitudinal matching across baseline ↔ year-3 scans
   → qAAMP output bundle
+```
+
+The same pipeline as a flow diagram, with the per-plug branch and the anatomic branch converging into the integrated metrics:
+
+```mermaid
+graph LR
+  CT["DICOM CT"] --> ROI["Radiologist<br/>ROIs"]
+  ROI --> SEG["GK clustering<br/>→ plug volume"]
+  SEG --> SHAPE["Shape: PCA length,<br/>diameter, HU"]
+  CT --> AIR["Airway seg →<br/>skeleton →<br/>topology graph"]
+  SHAPE --> LOC["Per-plug<br/>localization"]
+  AIR --> LOC
+  LOC --> PHENO["Phenotyping<br/>GMM @ 12 mm"]
+  PHENO --> RS["Resistance Score<br/>Poiseuille"]
+  PHENO --> OLVP["OLVP<br/>Voronoi"]
+  RS --> QAAMP["qAAMP bundle"]
+  OLVP --> QAAMP
 ```
 
 <div class="row">
@@ -176,7 +196,7 @@ Rather than going through a flow model, OLVP estimates how much of the *lung vol
 - Per lobe: `OLVP = 100 · V_obstructed / V_lobe`
 - Per patient: aggregated across the 5 lobes.
 
-OLVP failed in 3 of 97 scans where lobar segmentation did not converge.
+OLVP failed in 3 of 97 scans where lobar segmentation did not converge. Across the cohort, OLVP tracked independent air-trapping measures, correlating with disease-probability-measure functional small-airways disease (DPM-fSAD), mean Jacobian, and expiratory low-attenuation area below −856 HU.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -194,7 +214,8 @@ For 43 patients with paired baseline + year-3 scans, plugs are matched across ti
 - 580 baseline plugs vs. 619 year-3 plugs.
 - 47% of plugs persistent in the same airway over 3 years.
 - 81% of patients had ≥1 persistent plug.
-- Stringy plugs persisted at significantly higher rates than stubby; upper-lobe more than lower-lobe.
+- Stringy plugs persisted at higher rates than stubby; upper-lobe more than lower-lobe (P < 0.001).
+- Transient plugs were more radiodense than persistent ones.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -218,7 +239,7 @@ The downstream check: do the pipeline-derived measures actually correlate with p
   <b>Figure 5.</b> Spearman correlations and SHAP attributions of plug count vs. FEV₁ / FEF25–75 by airway generation. Proximal plugs dominate.
 </div>
 
-The same effect surfaces in the per-plug Resistance Score (RS-per-plug): each proximal plug contributes more to total airway resistance than a distal plug does.
+The same effect surfaces in the per-plug Resistance Score (RS-per-plug): each proximal plug contributes more to total airway resistance than a distal plug does (proximal vs. intermediate P = 0.008, proximal vs. distal P = 0.002), and the effect strengthens at high plug burden (>11 plugs, P = 0.014). Longitudinally, change in RS tracked change in FEV₁ across the paired scans (Spearman `rs = −0.50`, P = 0.001).
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -240,9 +261,11 @@ The pipeline's per-scan output is bundled as the **Quantitative Assessment of Ai
 | **Anatomic** | airway mucus plug map (lobe, generation per plug) |
 | **Integrated impact** | Resistance Score (RS), Obstructed Lung Volume Percentage (OLVP) |
 
+Plug length and volume also correlated with type-2 inflammation markers (blood eosinophils and sputum eosinophil peroxidase), linking the imaging biomarkers to the underlying biology.
+
 ## Cohort
 
-Patient data drawn from the **NHLBI Severe Asthma Research Program (SARP-3)** multi-institutional cohort. 57 baseline patients meeting inclusion criteria, 43 with paired year-3 follow-up scans; total 97 scans analyzed.
+Patient data drawn from the **NHLBI Severe Asthma Research Program (SARP-3)** multi-institutional cohort. Of 57 patients selected, 55 had baseline scans with plugs and 42 had year-3 scans with plugs; 43 patients had paired baseline + year-3 scans, for 97 scans analyzed in total.
 
 ## Stack
 
@@ -251,6 +274,9 @@ Patient data drawn from the **NHLBI Severe Asthma Research Program (SARP-3)** mu
 - **Flow modeling:** Poiseuille resistive-network solver over the airway graph.
 - **Annotation:** OsiriX DICOM viewer for radiologist ROI placement.
 
-## Links
+## Related Sources
 
-📄 [Paper (JCI Insight, 2024)](https://insight.jci.org/articles/view/174124)
+- [Paper (JCI Insight, 2024)](https://insight.jci.org/articles/view/174124): the qAAMP framework, RS and OLVP definitions, and the proximal-plug airflow-limitation findings.
+- [Open-access full text (PMC10967478)](https://pmc.ncbi.nlm.nih.gov/articles/PMC10967478/): complete methods and figures under CC-BY-4.0.
+- NHLBI Severe Asthma Research Program (SARP-3): the multi-institutional asthma cohort and standardized CT protocol the analysis is built on.
+- Open-source lobar lung-segmentation package: the established method used to segment parenchyma on a per-lobe basis (named generically here, as the paper cites it without naming a specific tool).

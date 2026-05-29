@@ -1,7 +1,7 @@
 ---
 layout: project
 title: EEG engagement decoding (UCSF Abbasi Lab)
-description: Signal-processing pipeline for decoding attentional engagement from 64-channel EEG. Morlet wavelet time-frequency analysis, non-negative matrix factorization for interpretable pattern extraction, scalp-topography analysis, and cross-validated classification via NMF reconstruction.
+description: Signal-processing pipeline for decoding attentional engagement from 64-channel EEG. Morlet wavelet time-frequency analysis, non-negative matrix factorization for interpretable pattern extraction, scalp-topography mapping, and cross-validated classification by reusing the learned NMF dictionary.
 img: assets/img/projects/nmf_eeg_p16.png
 importance: 7
 category: cv-ml
@@ -9,17 +9,33 @@ affiliation: UCSF
 date: 2019-11-01
 date_display: Nov 2019 – Jun 2020
 role: CV Scientist · UCSF Abbasi Lab
+mermaid:
+  enabled: true
+  zoomable: true
 ---
 
 ## Overview
 
-A signal-processing pipeline for decoding attentional engagement from raw 64-channel EEG. The chain runs from per-channel time-series → time-frequency spectrograms via Morlet wavelet transform → **non-negative matrix factorization (NMF)** that decomposes the spectrograms into a small set of additive pattern–coefficient pairs whose coefficient vectors map directly back onto scalp topography. The same factorization is then re-used as a cross-validated classifier: given a held-out trial, solve for its coefficient vector under the learned pattern dictionary and classify by correlation similarity.
+This is internal work from the UCSF Abbasi Lab. The pipeline decodes attentional engagement from raw 64-channel EEG. It runs from per-channel time series, to time-frequency spectrograms via the Morlet wavelet transform, to non-negative matrix factorization (NMF) that breaks the spectrograms into a small set of additive pattern-and-coefficient pairs. Each pattern's coefficient vector maps back onto scalp topography, so the decomposition stays physically interpretable. The same factorization then doubles as a classifier: for a held-out trial, we solve for its coefficient vector under the frozen pattern dictionary and classify by correlation similarity to the per-class training coefficients.
+
+The results here are preliminary. There is no public paper, code, or repository. The artifact is an internal lab slide deck, so the numbers below are the only ones reportable, and several acquisition details are not on record.
+
+This page is both a write-up and a study guide. The top sections give a fast tour of what the pipeline does and why. The numbered sections go deep on each stage: input, preprocessing, the wavelet transform, the NMF decomposition, scalp-topography analysis, the cross-validated classifier, the results, and the planned follow-ups.
+
+<div class="row">
+  <div class="col-sm mt-3 mt-md-0 text-center">
+    {% include figure.liquid loading="eager" path="assets/img/projects/nmf_eeg_p16.png" class="img-fluid rounded z-depth-1 mx-auto d-block" width="auto" max-height="520px" zoomable=true %}
+  </div>
+</div>
+<div class="caption">
+  NMF coefficient analysis. The Engaged and Non-Engaged classes side by side: per-class W-coefficient heat strips on the left, and each class's 16 per-pattern scalp topographs (P1 through P16) on the right. This single slide carries the full cross-class coefficient and topography comparison.
+</div>
 
 ## Pipeline
 
 ```
 64-channel EEG (channels × time × trials)
-  → global thresholding (noise removal)
+  → global thresholding (noise / artifact removal)
   → trial-label split: Engaged vs. Non-Engaged
   → per-trial, per-channel Morlet wavelet transform → time-frequency spectrograms
   → per-class NMF:  X  ≈  W · H   (additive, non-negative)
@@ -29,8 +45,22 @@ A signal-processing pipeline for decoding attentional engagement from raw 64-cha
   → coefficient → scalp topography mapping (per-pattern, per-class)
   → cross-validated classification:
         train  →  factorize X_train into (W_train, H_train)
-        test   →  solve W' = f(X_test, H_train) under non-negativity (LARS / Lasso)
-        score  →  correlation between W' and W_train per class
+        test   →  solve W' from (X_test, H_train) under non-negativity (LARS / Lasso)
+        score  →  correlation between W' and W_train per class, classify by higher correlation
+```
+
+The same flow as a diagram:
+
+```mermaid
+graph LR
+  E["64-ch EEG<br/>chan × time × trials"] --> T["Threshold<br/>artifact removal"]
+  T --> S{"Split by<br/>label"}
+  S -->|Engaged| ME["Morlet CWT<br/>→ NMF (k=16)"]
+  S -->|Non-Engaged| MN["Morlet CWT<br/>→ NMF (k=16)"]
+  ME --> P["Sort patterns<br/>time / freq"]
+  MN --> P
+  P --> TOPO["Scalp<br/>topography"]
+  P --> CV["CV classifier<br/>LARS/Lasso,<br/>correlate"]
 ```
 
 <div class="row">
@@ -39,15 +69,27 @@ A signal-processing pipeline for decoding attentional engagement from raw 64-cha
   </div>
 </div>
 <div class="caption">
-  Current pipeline. <b>Preprocessing</b>: global thresholding for noise removal, Engaged / Non-Engaged trial split, Morlet wavelet transform to spectrograms. <b>Decomposition</b>: NMF applied per class. <b>Interpretation</b>: pattern sorting (time / frequency), scalp topography visualization, correlation-based classification.
+  Current pipeline. Preprocessing: global thresholding for noise removal, Engaged / Non-Engaged trial split, Morlet wavelet transform to spectrograms. Decomposition: NMF applied per class. Interpretation: pattern sorting by time and frequency, scalp-topography visualization, and correlation-based classification.
 </div>
 
-## 1. Input: 64-Channel EEG
+## Stack at a glance
 
-- **Signal:** 3D tensor `channels × time × trials`.
-- **Acquisition:** 64-channel EEG system, time-locked to trial onset.
-- **Labels:** Engaged vs. Non-Engaged per trial. The dataset is **strongly imbalanced** toward Engaged trials.
-- **Auxiliary:** per-trial response time available as a secondary regression target.
+| Layer | Technology |
+| --- | --- |
+| Language / numerics | Python (NumPy, SciPy, scikit-learn) |
+| Time-frequency | Morlet continuous wavelet transform, per channel per trial |
+| Decomposition | Non-negative matrix factorization, rank `k = 16`, applied per class |
+| Test-time coding | LARS / Lasso under a non-negativity constraint (`spams` reference implementation) |
+| Visualization | Per-pattern scalp topography from 64-electrode coefficient vectors |
+
+## 1. Input: 64-channel EEG
+
+- **Signal:** a 3D tensor `channels × time × trials`.
+- **Acquisition:** 64-channel EEG, time-locked to trial onset.
+- **Labels:** Engaged vs. Non-Engaged per trial. The dataset is strongly imbalanced toward Engaged trials.
+- **Auxiliary target:** per-trial response time, available as a secondary regression target.
+
+The subject count, trial counts per class, the exact imbalance ratio, the sampling rate, the electrode montage, and the task paradigm are not on record in the deck, so this page does not state them.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -60,11 +102,13 @@ A signal-processing pipeline for decoding attentional engagement from raw 64-cha
 
 ## 2. Preprocessing
 
-A global intensity threshold removes high-amplitude artifacts (movement, electrode pop) before any time-frequency analysis. Trials are then split by label into two parallel streams (Engaged / Non-Engaged) that are factorized independently, keeping the per-class structure visible in the decomposed patterns rather than washed out by an aggregated fit.
+A global intensity threshold removes high-amplitude artifacts (movement, electrode pop) before any time-frequency analysis. The trials then split by label into two parallel streams, Engaged and Non-Engaged, that are factorized independently. Fitting each class separately keeps the per-class structure visible in the decomposed patterns rather than washing it out under an aggregated fit.
 
-## 3. Morlet Wavelet Transform
+## 3. Morlet wavelet transform
 
-Each per-channel, per-trial time series is mapped to a **time-frequency spectrogram** via continuous wavelet transform with a **Morlet (complex Gaussian-modulated sinusoid)** mother wavelet. Morlet was chosen because it gives a tunable joint time-frequency localization: narrow Gaussian envelope = sharp temporal events; wider envelope = better frequency resolution. EEG engagement signatures live across multiple bands (alpha, beta, theta) with onsets at different latencies, so a wavelet basis fits better than a fixed-window STFT.
+Each per-channel, per-trial time series maps to a time-frequency spectrogram through a continuous wavelet transform with a Morlet mother wavelet. The Morlet wavelet is a complex sinusoid modulated by a Gaussian envelope. The envelope width sets the joint time-frequency localization: a narrow envelope sharpens temporal events, and a wider envelope improves frequency resolution. EEG engagement signatures live across the alpha, beta, and theta bands with onsets at different latencies, so a wavelet basis fits better than a fixed-window STFT.
+
+The exact envelope width, the number of frequencies, the frequency range, and the cycle count are not recorded in the deck, so this page does not specify them.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -81,20 +125,29 @@ Each per-channel, per-trial time series is mapped to a **time-frequency spectrog
   </div>
 </div>
 <div class="caption">
-  Per-channel Morlet spectrograms for Engaged trials (top) and Non-Engaged trials (bottom), 64 channels each. The cross-class structural differences these spectrograms expose are what the NMF stage is asked to decompose into a small basis.
+  Per-channel Morlet spectrograms for Engaged trials (top) and Non-Engaged trials (bottom), 64 channels each. The cross-class structural differences these spectrograms expose are what the NMF stage decomposes into a small basis.
 </div>
 
-## 4. Non-Negative Matrix Factorization
+## 4. Non-negative matrix factorization
 
-The spectrograms are stacked into a single non-negative matrix `X` per class, and factorized as
+The spectrograms stack into a single non-negative matrix `X` per class, factorized as
 
 ```
 X  ≈  W · H,    W ≥ 0,   H ≥ 0
 ```
 
-where `H` (`17758 × 16`) holds **16 principal time-frequency-channel patterns** as rows and `W` (`16 × 128`) gives the **per-trial coefficient weights** for combining those patterns. Rank `k = 16` was the dictionary size used.
+The deck reports `H` as `17758 × 16`, described as time-by-frequency-by-channel features with 16 patterns, and `W` as `16 × 128` for the per-trial coefficients. The dictionary rank is `k = 16`. The source prose describes the 16 patterns as rows while giving `H` 16 columns, and the exact orientation convention used in the deck is not on record, so the shapes appear here verbatim rather than silently re-oriented.
 
-NMF was chosen over PCA or ICA because its **additive, non-negative** constraint produces parts-based decompositions that align with how power spectra physically combine, and the resulting coefficient vectors are directly interpretable as "how strongly does pattern P_i express in this trial", which is what the downstream scalp-topography mapping needs.
+NMF was chosen over PCA or ICA because its additive, non-negative constraint produces parts-based decompositions that align with how power spectra physically combine. The resulting coefficient vectors read directly as how strongly each pattern expresses in a trial, which is what the downstream scalp-topography mapping needs.
+
+| Item | Value |
+| --- | --- |
+| Objective | `X ≈ W · H` with `W ≥ 0`, `H ≥ 0` |
+| Rank `k` | 16 patterns per class |
+| `H` shape (per deck) | 17758 × 16 (time × frequency × channel features) |
+| `W` shape (per deck) | 16 × 128 (per-trial coefficients) |
+| Fit scope | One factorization per class (Engaged, Non-Engaged) |
+| Reconstruction quality | Average correlation 0.99 across trials |
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -107,7 +160,7 @@ NMF was chosen over PCA or ICA because its **additive, non-negative** constraint
 
 ### Reconstruction fidelity
 
-Across the dictionary, NMF reconstructions match the original spectrograms with **average correlation 0.99**, confirming that 16 patterns are sufficient to capture the dominant structure in the time-frequency representation.
+Across the dictionary, NMF reconstructions match the original spectrograms with an average correlation of 0.99 across trials. That confirms 16 patterns are enough to capture the dominant structure in the time-frequency representation.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -115,7 +168,7 @@ Across the dictionary, NMF reconstructions match the original spectrograms with 
   </div>
 </div>
 <div class="caption">
-  NMF reconstructions vs. original Morlet spectrograms. Average reconstruction correlation across trials: 0.99.
+  NMF reconstructions vs. the original Morlet spectrograms. Average reconstruction correlation across trials: 0.99.
 </div>
 
 ### Patterns and coefficients
@@ -126,58 +179,28 @@ Across the dictionary, NMF reconstructions match the original spectrograms with 
   </div>
 </div>
 <div class="caption">
-  The 16 principal patterns of the <code>H</code> matrix, sorted by dominant frequency / time signature.
+  The 16 principal patterns of the <code>H</code> matrix, sorted by dominant frequency and time signature.
 </div>
 
-<div class="row">
-  <div class="col-sm mt-3 mt-md-0 text-center">
-    {% include figure.liquid loading="eager" path="assets/img/projects/eeg_w_coefficients_engaged.jpeg" class="img-fluid rounded z-depth-1 mx-auto d-block" width="auto" max-height="180px" zoomable=true %}
-  </div>
-</div>
-<div class="caption">
-  Coefficient strip, Engaged trials. Each column is a trial; row intensity is the strength of pattern <code>P_i</code> in that trial.
-</div>
+The per-trial coefficient strips and the per-pattern scalp topographs for both classes appear together in the hero slide at the top of this page (`nmf_eeg_p16.png`), which shows the Engaged and Non-Engaged coefficient heat strips and their P1 through P16 topographs side by side.
 
-<div class="row">
-  <div class="col-sm mt-3 mt-md-0 text-center">
-    {% include figure.liquid loading="eager" path="assets/img/projects/eeg_w_coefficients_nonengaged.jpeg" class="img-fluid rounded z-depth-1 mx-auto d-block" width="auto" max-height="180px" zoomable=true %}
-  </div>
-</div>
-<div class="caption">
-  Coefficient strip, Non-Engaged trials.
-</div>
+## 5. Coefficient analysis (scalp topography)
 
-## 5. Coefficient Analysis (Scalp Topography)
+The factorization produces 16 patterns per class, each with a coefficient distribution over the 64 electrodes. Plotting each pattern's coefficients in scalp coordinates produces a topography map that exposes which scalp regions express that pattern. This spatial readout is the advantage of NMF over latent decompositions whose components carry no direct spatial interpretation.
 
-The factorization produces 16 patterns per class, each with a corresponding coefficient distribution over 64 electrodes. Plotting each pattern's coefficients in scalp coordinates produces a **topography map** that exposes which brain regions activate that pattern, a key advantage of NMF over latent decompositions whose components have no direct spatial interpretation.
+The combined cross-class view is the hero slide above: the left half holds the Engaged and Non-Engaged coefficient strips, and the right half holds each class's 16 per-pattern topographs, so the spatial differences between the two classes read off a single figure.
 
-<div class="row">
-  <div class="col-sm mt-3 mt-md-0 text-center">
-    {% include figure.liquid loading="eager" path="assets/img/projects/eeg_scalp_topography_engaged.jpeg" class="img-fluid rounded z-depth-1 mx-auto d-block" width="auto" max-height="180px" zoomable=true %}
-  </div>
-</div>
-<div class="caption">
-  Per-pattern scalp topography for the 16 patterns from <b>Engaged</b> trials (P1–P16). Each topograph shows where on the scalp that pattern's coefficient is strongest.
-</div>
+## 6. Cross-validated classification
 
-<div class="row">
-  <div class="col-sm mt-3 mt-md-0 text-center">
-    {% include figure.liquid loading="eager" path="assets/img/projects/eeg_scalp_topography_nonengaged.jpeg" class="img-fluid rounded z-depth-1 mx-auto d-block" width="auto" max-height="180px" zoomable=true %}
-  </div>
-</div>
-<div class="caption">
-  Same 16-pattern decomposition for <b>Non-Engaged</b> trials, exposing the cross-class differences in spatial pattern expression.
-</div>
+The same NMF basis doubles as a classifier under 5-fold cross-validation:
 
-## 6. Cross-Validated Classification
+1. **Train fold:** factorize the training spectrograms `X_train ≈ W_train · H_train`. `H_train` is the learned dictionary.
+2. **Test fold:** given test spectrograms `X_test` and the frozen `H_train`, solve for `W'` such that `X_test ≈ W' · H_train` under a non-negativity constraint. This constrained-coefficient estimation uses LARS / Lasso.
+3. **Score:** compute the correlation between `W'` and `W_train` per class to measure how well the test trial aligns with the training-set coefficient distribution. Classify by the class with the higher correlation.
 
-The same NMF basis doubles as a classifier. 5-fold cross-validation:
+The test-time step matches the dictionary-based sparse-coding mode of the SPAMS `mexLasso` solver, which finds sparse coefficients against a fixed dictionary and supports an optional non-negativity constraint. Whether that flag and any specific sparsity level were enabled in the deck is not on record, so this page describes the step only as solving under a non-negativity constraint.
 
-1. **Train fold:** factorize training spectrograms `X_train ≈ W_train · H_train`. `H_train` is the learned dictionary.
-2. **Test fold:** given test spectrograms `X_test` and the frozen `H_train`, solve for `W'` such that `X_test ≈ W' · H_train` under non-negativity. The paper used **LARS / Lasso** for this constrained-coefficient estimation.
-3. **Score:** compute the correlation coefficient between `W'` and `W_train` to measure how well the test trial aligns with the training-set coefficient distribution. Classify by class with higher correlation.
-
-## 7. Preliminary Results
+## 7. Preliminary results
 
 | Split | Engaged Acc. | Non-Engaged Acc. |
 |---|---|---|
@@ -188,25 +211,33 @@ The same NMF basis doubles as a classifier. 5-fold cross-validation:
 | 5 | 0.37 | 0.50 |
 | **Average** | **0.58 ± 0.16** | **0.42 ± 0.25** |
 
-Non-Engaged accuracy is both lower and higher-variance than Engaged, consistent with the class imbalance in the dataset, which is dominated by Engaged trials.
+Non-Engaged accuracy is both lower and higher-variance than Engaged. That is consistent with the class imbalance in the dataset, which is dominated by Engaged trials. These are the only classification metrics on record. Reconstruction correlation (0.99) and the table above are the full set of reportable numbers.
 
-## 8. Future Work
+## 8. Future work
 
 Items flagged in the slide deck as planned follow-ups:
 
-- **Multi-patient analysis:** generalize the per-class factorization across subjects.
-- **Class imbalance:** adjust for the engagement-dominant sampling (re-sampling, weighted losses, focal NMF objectives).
-- **Stronger classifier head:** replace correlation similarity with a regression or neural-net head trained on `W'` features.
-- **Response-time regression:** predict per-trial response time from the same coefficient features.
+- **Multi-patient generalization.** Extend the per-class factorization across subjects so the learned dictionary transfers rather than being refit per recording.
+- **Class-imbalance handling.** Address the engagement-dominant sampling that drags Non-Engaged accuracy down and inflates its variance, through re-sampling, weighted losses, or focal NMF objectives.
+- **Stronger classifier head.** Replace the correlation-similarity decision with a regression or neural-net head trained on the `W'` features, since correlation matching is a coarse decision rule.
+- **Response-time regression.** Predict the per-trial response time from the same coefficient features, reusing the dictionary as a shared representation for a second target.
 
 ## Stack
 
 - **Language / numerics:** Python (NumPy, SciPy, scikit-learn).
 - **Time-frequency:** Morlet continuous wavelet transform per channel per trial.
 - **Decomposition:** non-negative matrix factorization with rank `k = 16`, applied per class.
-- **Coefficient estimation at test time:** LARS / Lasso under non-negativity constraints (`spams` reference implementation).
+- **Coefficient estimation at test time:** LARS / Lasso under a non-negativity constraint (`spams` reference implementation).
 - **Visualization:** per-pattern scalp topography mapping from 64-electrode coefficient vectors.
 
 ## Links
 
-📄 Internal lab work (UCSF Abbasi Lab): slide deck on file.
+📄 Internal lab work (UCSF Abbasi Lab): slide deck on file. No public paper, code, or repository.
+
+## Related Sources
+
+These are method-background references for the techniques used, not citations of this project, which has no public publication or repository.
+
+- Morlet wavelet ([Wikipedia](https://en.wikipedia.org/wiki/Morlet_wavelet)): a complex exponential carrier times a Gaussian envelope, whose σ parameter trades time resolution against frequency resolution, well-suited to non-stationary signals like EEG.
+- scikit-learn NMF ([`sklearn.decomposition.NMF`](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.NMF.html)): decomposes a non-negative `X ≈ W·H`, minimizing the Frobenius reconstruction error with optional L1/L2 regularization.
+- SPAMS `mexLasso` ([documentation](https://thoth.inrialpes.fr/people/mairal/spams/doc_2.5/doc/html/doc_spams005.html), [source](https://github.com/getspams/spams-devel)): a fast LARS/Lasso solver for dictionary-based sparse coding, with an option (`param.pos`) to add a non-negativity constraint on the solution, matching the test-time coefficient step.

@@ -259,3 +259,13 @@ ul.task-list input[type="checkbox"] {
 .d2h-diff-table {
   position: relative;
 }
+
+/* Mermaid diagrams: keep within the content column, scale down rather than clip, and center. */
+.mermaid {
+  text-align: center;
+  overflow-x: auto;
+}
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
