@@ -93,7 +93,9 @@
   border: 1px solid var(--global-divider-color);
   text-decoration: none;
   color: inherit;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 
   &:hover,
   &:focus-visible {

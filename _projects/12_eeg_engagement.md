@@ -74,13 +74,13 @@ graph LR
 
 ## Stack at a glance
 
-| Layer | Technology |
-| --- | --- |
-| Language / numerics | Python (NumPy, SciPy, scikit-learn) |
-| Time-frequency | Morlet continuous wavelet transform, per channel per trial |
-| Decomposition | Non-negative matrix factorization, rank `k = 16`, applied per class |
-| Test-time coding | LARS / Lasso under a non-negativity constraint (`spams` reference implementation) |
-| Visualization | Per-pattern scalp topography from 64-electrode coefficient vectors |
+| Layer               | Technology                                                                        |
+| ------------------- | --------------------------------------------------------------------------------- |
+| Language / numerics | Python (NumPy, SciPy, scikit-learn)                                               |
+| Time-frequency      | Morlet continuous wavelet transform, per channel per trial                        |
+| Decomposition       | Non-negative matrix factorization, rank `k = 16`, applied per class               |
+| Test-time coding    | LARS / Lasso under a non-negativity constraint (`spams` reference implementation) |
+| Visualization       | Per-pattern scalp topography from 64-electrode coefficient vectors                |
 
 ## 1. Input: 64-channel EEG
 
@@ -140,14 +140,14 @@ The deck reports `H` as `17758 × 16`, described as time-by-frequency-by-channel
 
 NMF was chosen over PCA or ICA because its additive, non-negative constraint produces parts-based decompositions that align with how power spectra physically combine. The resulting coefficient vectors read directly as how strongly each pattern expresses in a trial, which is what the downstream scalp-topography mapping needs.
 
-| Item | Value |
-| --- | --- |
-| Objective | `X ≈ W · H` with `W ≥ 0`, `H ≥ 0` |
-| Rank `k` | 16 patterns per class |
-| `H` shape (per deck) | 17758 × 16 (time × frequency × channel features) |
-| `W` shape (per deck) | 16 × 128 (per-trial coefficients) |
-| Fit scope | One factorization per class (Engaged, Non-Engaged) |
-| Reconstruction quality | Average correlation 0.99 across trials |
+| Item                   | Value                                              |
+| ---------------------- | -------------------------------------------------- |
+| Objective              | `X ≈ W · H` with `W ≥ 0`, `H ≥ 0`                  |
+| Rank `k`               | 16 patterns per class                              |
+| `H` shape (per deck)   | 17758 × 16 (time × frequency × channel features)   |
+| `W` shape (per deck)   | 16 × 128 (per-trial coefficients)                  |
+| Fit scope              | One factorization per class (Engaged, Non-Engaged) |
+| Reconstruction quality | Average correlation 0.99 across trials             |
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -202,14 +202,14 @@ The test-time step matches the dictionary-based sparse-coding mode of the SPAMS 
 
 ## 7. Preliminary results
 
-| Split | Engaged Acc. | Non-Engaged Acc. |
-|---|---|---|
-| 1 | 0.69 | 0.80 |
-| 2 | 0.67 | 0.40 |
-| 3 | 0.40 | 0.40 |
-| 4 | 0.76 | 0.00 |
-| 5 | 0.37 | 0.50 |
-| **Average** | **0.58 ± 0.16** | **0.42 ± 0.25** |
+| Split       | Engaged Acc.    | Non-Engaged Acc. |
+| ----------- | --------------- | ---------------- |
+| 1           | 0.69            | 0.80             |
+| 2           | 0.67            | 0.40             |
+| 3           | 0.40            | 0.40             |
+| 4           | 0.76            | 0.00             |
+| 5           | 0.37            | 0.50             |
+| **Average** | **0.58 ± 0.16** | **0.42 ± 0.25**  |
 
 Non-Engaged accuracy is both lower and higher-variance than Engaged. That is consistent with the class imbalance in the dataset, which is dominated by Engaged trials. These are the only classification metrics on record. Reconstruction correlation (0.99) and the table above are the full set of reportable numbers.
 

@@ -146,16 +146,16 @@ The five helper modules are `realsense_manager.py` (capture), `skeleton_tracking
 
 ## Stack at a glance
 
-| Layer | Technology |
-| --- | --- |
-| Language / runtime | Python 3 |
-| Depth sensing | Intel RealSense (D-series) via `pyrealsense2`; 6-stage filter chain; depth-color alignment; intrinsics-driven metric deprojection |
-| Pose estimation | Cubemos Skeleton Tracking SDK (2D, 18 joints, CPU); 3D via RealSense deprojection with 5×5 median depth |
-| Numerics + signal processing | NumPy, SciPy (`find_peaks`, `np.gradient`, `resample`, FFT cross-correlation), pandas |
-| Regression | `latest_model.pkl` loaded via `joblib`; not included in the repo (lived on a local `D:/` path) |
-| Image processing | OpenCV (frame ops + overlays), point-cloud / mesh helpers |
-| Live UI | OpenCV window with a matplotlib breathing graph rasterized into the same viewport |
-| Hardware | Intel RealSense depth camera, Intel NUC mini-PC, Arduino-driven touchscreen, custom 3D-printed enclosure |
+| Layer                        | Technology                                                                                                                        |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Language / runtime           | Python 3                                                                                                                          |
+| Depth sensing                | Intel RealSense (D-series) via `pyrealsense2`; 6-stage filter chain; depth-color alignment; intrinsics-driven metric deprojection |
+| Pose estimation              | Cubemos Skeleton Tracking SDK (2D, 18 joints, CPU); 3D via RealSense deprojection with 5×5 median depth                           |
+| Numerics + signal processing | NumPy, SciPy (`find_peaks`, `np.gradient`, `resample`, FFT cross-correlation), pandas                                             |
+| Regression                   | `latest_model.pkl` loaded via `joblib`; not included in the repo (lived on a local `D:/` path)                                    |
+| Image processing             | OpenCV (frame ops + overlays), point-cloud / mesh helpers                                                                         |
+| Live UI                      | OpenCV window with a matplotlib breathing graph rasterized into the same viewport                                                 |
+| Hardware                     | Intel RealSense depth camera, Intel NUC mini-PC, Arduino-driven touchscreen, custom 3D-printed enclosure                          |
 
 ---
 
@@ -188,13 +188,13 @@ The 5×5 median is the reason chest displacement stays clean despite the RealSen
 
 A contactless reading is only valid if the patient sits still. Five posture checks run on every frame, each comparing the live skeleton to a per-session baseline that the operator captures by pressing the `b` key. The thresholds below are taken straight from the code.
 
-| Check | What it measures | Flagged when |
-| --- | --- | --- |
-| Rocking | Mean z (depth) of left shoulder, right shoulder, neck-midpoint | `abs(prev_z − avg) > 0.05` |
-| Side movement | Mean x of the two shoulder joints | `> 5` |
-| Shoulder lift | Mean y of the two shoulder joints | `> 5` |
-| Neck movement | Mean x of the 5 head joints (nose, both ears, both eyes) | `> 10` |
-| Leg position | Per-leg knee-to-ankle angle via right-triangle trig | angle `≤ 80°` or `≥ 100°` on either leg |
+| Check         | What it measures                                               | Flagged when                            |
+| ------------- | -------------------------------------------------------------- | --------------------------------------- |
+| Rocking       | Mean z (depth) of left shoulder, right shoulder, neck-midpoint | `abs(prev_z − avg) > 0.05`              |
+| Side movement | Mean x of the two shoulder joints                              | `> 5`                                   |
+| Shoulder lift | Mean y of the two shoulder joints                              | `> 5`                                   |
+| Neck movement | Mean x of the 5 head joints (nose, both ears, both eyes)       | `> 10`                                  |
+| Leg position  | Per-leg knee-to-ankle angle via right-triangle trig            | angle `≤ 80°` or `≥ 100°` on either leg |
 
 The leg angle comes from `compute_angle`, an arcsine of the opposite over the hypotenuse in degrees, so a roughly vertical shin (near 90°) reads as a good seated posture. Each check renders a "Good" or "Bad" status overlay on the depth viewport in real time, so the operator can correct the patient mid-session rather than discover motion-corrupted data afterward.
 
@@ -258,14 +258,14 @@ Two honest notes on the shipped code. First, the model interface accepts height 
 
 Given the volume curve in liters and a flow curve from `flow = np.gradient(volume, 0.1)` (dt = 0.1 s), `compute_pft_measures(...)` extracts the panel. The table states what each value is in the code, including the prototype simplifications.
 
-| Metric | As computed in code |
-| --- | --- |
-| FVC | `exhalation.max()`: forced vital capacity |
-| FEV1 | a fixed frame index into the exhalation (index 6 in the module, 31 in the notebook), a fixed-index sample rather than a validated 1-second integral |
-| FEV1/FVC | ratio of the two above |
-| PEF | `flow_volume.max()`: peak expiratory flow |
-| FEF25/50/75 | flow at the volume crossing of 25/50/75% of FVC, using the second crossing index |
-| FEF25–75 | `(0.75·FVC − 0.25·FVC) / Δframes(FEF25 → FEF75)`: mean mid-expiratory flow |
+| Metric      | As computed in code                                                                                                                                 |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FVC         | `exhalation.max()`: forced vital capacity                                                                                                           |
+| FEV1        | a fixed frame index into the exhalation (index 6 in the module, 31 in the notebook), a fixed-index sample rather than a validated 1-second integral |
+| FEV1/FVC    | ratio of the two above                                                                                                                              |
+| PEF         | `flow_volume.max()`: peak expiratory flow                                                                                                           |
+| FEF25/50/75 | flow at the volume crossing of 25/50/75% of FVC, using the second crossing index                                                                    |
+| FEF25–75    | `(0.75·FVC − 0.25·FVC) / Δframes(FEF25 → FEF75)`: mean mid-expiratory flow                                                                          |
 
 These are the pragmatic prototype heuristics, not clinical-grade timing. The FEV1 value in particular is a fixed-frame sample (the comment notes 30 frames per second after downsampling, so 30 frames is meant to be one second), and the module and the analysis notebook disagree on the index, so the page reports it as a fixed-index approximation. All values are reported live on the depth viewport during a run and saved with the raw frame data.
 
@@ -273,14 +273,14 @@ These are the pragmatic prototype heuristics, not clinical-grade timing. The FEV
 
 The eight sections above describe the archived Python prototype, the code that actually ran in the clinic. The patent (US20240090795A1) discloses a broader system, and it is worth separating the two so a reader knows what is real and what is claimed.
 
-| Capability | Shipped prototype (this repo) | Patent scope |
-| --- | --- | --- |
-| Depth camera | Intel RealSense | RealSense and ZED, multi-camera (front, side, zoom) |
-| Pose / landmarks | Cubemos 18-joint 2D, deprojected to 3D | shoulder, waist, chest landmark ID |
-| 3D chest model | mean depth in a 2D ROI; point-cloud helpers present but not the active path | Delaunay triangulation + Marching Cubes mesh |
-| Volume model | a regression `.pkl` (multi-output) | multi-linear regression, plus CNN and LSTM |
-| Filtering / tracking | RealSense filter chain + 5×5 median | adds Savitzky-Golay filtering and KLT feature tracking |
-| Parameters | FVC, FEV1, FEV1/FVC, PEF, FEF25/50/75, FEF25–75 | adds FEV6 |
+| Capability           | Shipped prototype (this repo)                                               | Patent scope                                           |
+| -------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Depth camera         | Intel RealSense                                                             | RealSense and ZED, multi-camera (front, side, zoom)    |
+| Pose / landmarks     | Cubemos 18-joint 2D, deprojected to 3D                                      | shoulder, waist, chest landmark ID                     |
+| 3D chest model       | mean depth in a 2D ROI; point-cloud helpers present but not the active path | Delaunay triangulation + Marching Cubes mesh           |
+| Volume model         | a regression `.pkl` (multi-output)                                          | multi-linear regression, plus CNN and LSTM             |
+| Filtering / tracking | RealSense filter chain + 5×5 median                                         | adds Savitzky-Golay filtering and KLT feature tracking |
+| Parameters           | FVC, FEV1, FEV1/FVC, PEF, FEF25/50/75, FEF25–75                             | adds FEV6                                              |
 
 The CNN, LSTM, Delaunay/Marching-Cubes meshing, KLT tracking, and Savitzky-Golay filtering are patent-disclosed and are not present in the archived prototype. The analysis notebook does go beyond the live driver: `compute_lung_params_master.ipynb` aligns the Breathily curve to the reference spirometer with an FFT cross-correlation and `scipy.signal.resample`, and it compares predicted values against GLI-style reference normal-value and lower-limit-of-normal tables indexed by age and height. Those reference spreadsheets are referenced by the notebook but are not included in the repo.
 

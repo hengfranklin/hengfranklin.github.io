@@ -20,6 +20,7 @@ nav_order: 3
 </ul>
 
 <!-- Bibsearch Feature -->
+
 {% include bib_search.liquid %}
 
 <div class="tab-content" id="pubAbstractTabContent">

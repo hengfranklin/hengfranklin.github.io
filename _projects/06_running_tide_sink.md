@@ -161,11 +161,11 @@ The CV pipeline is the in-situ measurement layer. Its output is a sink rate equa
 
 Open-ocean buoy footage is often noisy. Before any segmentation, each frame is run through an AutoML-trained CNN classifier, built on Google Cloud AutoML Vision, that labels it usable or not. The reject classes cover the dominant failure modes:
 
-| Reject class | What it catches |
-| --- | --- |
-| Fog | Low-visibility water column, washed-out contrast |
-| Occlusion | Biofouling on the lens, marine-snow plumes |
-| Bubbles | Wave entrainment near the surface |
+| Reject class | What it catches                                  |
+| ------------ | ------------------------------------------------ |
+| Fog          | Low-visibility water column, washed-out contrast |
+| Occlusion    | Biofouling on the lens, marine-snow plumes       |
+| Bubbles      | Wave entrainment near the surface                |
 
 The filter is deliberately conservative: losing borderline frames is acceptable since the downstream curve fit averages over many accepted frames, but letting through frames with confounding artifacts biases the measurement. The internals of the AutoML model are abstracted by the service, so we tune it through the labeled examples and the accept threshold rather than the architecture.
 
@@ -210,12 +210,12 @@ f(x)  =  A · r^x  +  C
 
 The parameters carry physical meaning for a sinking batch:
 
-| Parameter | Meaning |
-| --- | --- |
-| `A` | Initial excess floating fraction at deployment, above the long-run asymptote |
-| `r` | Per-hour decay factor; how quickly the floating fraction falls each hour |
-| `C` | Residual floating-fraction asymptote the curve settles toward |
-| `x` | Hours since deployment |
+| Parameter | Meaning                                                                      |
+| --------- | ---------------------------------------------------------------------------- |
+| `A`       | Initial excess floating fraction at deployment, above the long-run asymptote |
+| `r`       | Per-hour decay factor; how quickly the floating fraction falls each hour     |
+| `C`       | Residual floating-fraction asymptote the curve settles toward                |
+| `x`       | Hours since deployment                                                       |
 
 This is the exponential-decay-to-asymptote form, equivalent to `A · e^(-kx) + C` with `r = e^(-k)`. Fitting it smooths the raw signal and reduces the impact of outlier frames that survived the filter. The resulting equation is the sink rate for that batch and is passed to the ocean model that produces the carbon accounting. The oceanography team reviews each fit before it is certified.
 
@@ -238,14 +238,14 @@ Results from production deployments are internal to Running Tide and are not pub
 
 ## Stack
 
-| Layer | Technology |
-| --- | --- |
-| Language and numerics | Python (NumPy, SciPy, scikit-learn) |
-| Frame filter | Google Cloud AutoML Vision CNN classifier |
-| Segmentation | Mask R-CNN, trained on a custom corpus of roughly 2,000 labeled frames |
-| Curve fit | Non-linear least-squares fit of the exponential-decay model (SciPy) |
-| Orchestration | Cloud Composer / Airflow DAGs for daily ingest and processing of new buoy footage |
-| Containerization | Docker workers for reproducible, scalable inference on incoming streams |
+| Layer                 | Technology                                                                        |
+| --------------------- | --------------------------------------------------------------------------------- |
+| Language and numerics | Python (NumPy, SciPy, scikit-learn)                                               |
+| Frame filter          | Google Cloud AutoML Vision CNN classifier                                         |
+| Segmentation          | Mask R-CNN, trained on a custom corpus of roughly 2,000 labeled frames            |
+| Curve fit             | Non-linear least-squares fit of the exponential-decay model (SciPy)               |
+| Orchestration         | Cloud Composer / Airflow DAGs for daily ingest and processing of new buoy footage |
+| Containerization      | Docker workers for reproducible, scalable inference on incoming streams           |
 
 ## Related Sources
 

@@ -17,7 +17,16 @@ layout: page
       {% endif %}
 
       {% if page.category %}
-        <p><strong>Category:</strong> {{ page.category | replace: "-", " " | replace: "cv ml", "Computer Vision &amp; ML" | replace: "ai engineering", "Full-Stack AI Engineering" | replace: "earlier work", "Earlier Work" }}</p>
+        <p>
+          <strong>Category:</strong>
+          {{
+            page.category
+            | replace: '-', ' '
+            | replace: 'cv ml', 'Computer Vision &amp; ML'
+            | replace: 'ai engineering', 'Full-Stack AI Engineering'
+            | replace: 'earlier work', 'Earlier Work'
+          }}
+        </p>
       {% endif %}
     </div>
   {% endif %}

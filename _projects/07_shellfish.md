@@ -33,12 +33,12 @@ This was internal lab work at Running Tide, so there is no public repository and
 
 ## What it does, in four facts
 
-| Property | Value |
-| --- | --- |
-| Shellfish per frame | ~1,000 |
-| Smallest individuals | ~2×2 px at sensor resolution |
-| Per-frame time budget | 0.125 s (~8 FPS) |
-| Accuracy vs. human counts | >90% at that throughput |
+| Property                  | Value                        |
+| ------------------------- | ---------------------------- |
+| Shellfish per frame       | ~1,000                       |
+| Smallest individuals      | ~2×2 px at sensor resolution |
+| Per-frame time budget     | 0.125 s (~8 FPS)             |
+| Accuracy vs. human counts | >90% at that throughput      |
 
 ## Pipeline
 
@@ -71,15 +71,15 @@ The counting path and the environmental telemetry path share the processing boat
 
 ## Stack at a glance
 
-| Layer | What we used |
-| --- | --- |
-| Detector | Faster R-CNN, two-stage (RPN proposals, then per-region classifier and box regressor) |
-| Anchors | RPN anchor scales and aspect ratios tuned for the small-object size distribution |
-| Post-processing | Scale-dependent confidence filter, dense-cluster NMS variant, merge/split correction |
-| Edge platform | ~half a dozen Raspberry Pis for environmental telemetry to the cloud |
-| Fabrication | Aluminum catamaran processing boat and floating oyster reefs (in-house, TechPlace / former Brunswick Naval Air Station); Dawson Metal 18-gauge 316 stainless growth bins |
-| Throughput target | 0.125 s/frame (~8 FPS) |
-| End-to-end metric | Absolute counting error vs. human ground-truth on held-out frames |
+| Layer             | What we used                                                                                                                                                             |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Detector          | Faster R-CNN, two-stage (RPN proposals, then per-region classifier and box regressor)                                                                                    |
+| Anchors           | RPN anchor scales and aspect ratios tuned for the small-object size distribution                                                                                         |
+| Post-processing   | Scale-dependent confidence filter, dense-cluster NMS variant, merge/split correction                                                                                     |
+| Edge platform     | ~half a dozen Raspberry Pis for environmental telemetry to the cloud                                                                                                     |
+| Fabrication       | Aluminum catamaran processing boat and floating oyster reefs (in-house, TechPlace / former Brunswick Naval Air Station); Dawson Metal 18-gauge 316 stainless growth bins |
+| Throughput target | 0.125 s/frame (~8 FPS)                                                                                                                                                   |
+| End-to-end metric | Absolute counting error vs. human ground-truth on held-out frames                                                                                                        |
 
 ---
 
@@ -154,11 +154,11 @@ The smallest detections, near 2×2 px, are noise-dominated. At that scale a few 
 
 The pass has three stages, in order:
 
-| # | Stage | Why it exists |
-| --- | --- | --- |
-| 1 | Scale-dependent confidence filter | A fixed confidence threshold is wrong across scales. Small boxes are noise-dominated, so their threshold has to depend on box scale rather than a single global cutoff. |
-| 2 | Dense-cluster NMS variant | Plain IoU-NMS over-suppresses legitimate adjacent detections when oysters are packed tightly. A variant tuned for dense clusters preserves neighbors that standard NMS would wrongly merge. |
-| 3 | Merge / split correction | Motion blur or shadow can merge two oysters into one box or split one oyster into two. This stage corrects ambiguous adjacent boxes before the final count. |
+| #   | Stage                             | Why it exists                                                                                                                                                                               |
+| --- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Scale-dependent confidence filter | A fixed confidence threshold is wrong across scales. Small boxes are noise-dominated, so their threshold has to depend on box scale rather than a single global cutoff.                     |
+| 2   | Dense-cluster NMS variant         | Plain IoU-NMS over-suppresses legitimate adjacent detections when oysters are packed tightly. A variant tuned for dense clusters preserves neighbors that standard NMS would wrongly merge. |
+| 3   | Merge / split correction          | Motion blur or shadow can merge two oysters into one box or split one oyster into two. This stage corrects ambiguous adjacent boxes before the final count.                                 |
 
 The literature analogue for stage 2 is soft-NMS, which down-weights rather than discards overlapping boxes to keep recall in crowded scenes. I am not reporting per-stage ablation deltas, since those numbers are not publicly available.
 
@@ -182,5 +182,5 @@ I am not reporting precision, recall, mAP, dataset sizes, or training details, s
 - 🏭 [Dawson Metal: Shellfish Bins case study](https://www.dawsonmetal.com/case-studies/shellfish-bins): fabrication details for the 18-gauge 316 stainless-steel oyster bins that flow through the imaging platform.
 - 📄 [Faster R-CNN (Ren et al., NeurIPS 2015)](https://proceedings.neurips.cc/paper/2015/file/14bfa6bb14875e45bba028a21ed38046-Paper.pdf): the two-stage detector architecture this system is built on.
 - 📄 [Small Object Detection via Modified Faster R-CNN](https://www.mdpi.com/2076-3417/8/5/813): background on small-object adaptations (anchor resizing, NMS variants) cited here as method grounding only.
-</content>
-</invoke>
+  </content>
+  </invoke>

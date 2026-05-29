@@ -89,16 +89,16 @@ graph TD
 
 ## Stack at a glance
 
-| Layer | Technology |
-| --- | --- |
-| Frontend | Next.js 14.2.29 (App Router), React 18, TypeScript, recharts, react-simple-maps, d3-force |
-| Frontend hosting | Vercel (project `foia-fluent`, framework `nextjs`) |
-| Backend | FastAPI 0.115.12, uvicorn, httpx, pydantic 2 |
-| Backend hosting | Railway (nixpacks builder, healthcheck `/health`) |
-| Database + auth | Supabase (Postgres, Row Level Security, Supabase Auth email OTP) |
-| LLM | Claude `claude-haiku-4-5-20251001` and `claude-sonnet-4-6` (Anthropic API) |
-| Search | Tavily (web, documents, public records), MuckRock REST + domain-scoped Tavily |
-| Federal data | openFDA, NHTSA, CPSC, Congress.gov, Regulations.gov, FEC, GAO, EPA ECHO, FOIA.gov |
+| Layer            | Technology                                                                                |
+| ---------------- | ----------------------------------------------------------------------------------------- |
+| Frontend         | Next.js 14.2.29 (App Router), React 18, TypeScript, recharts, react-simple-maps, d3-force |
+| Frontend hosting | Vercel (project `foia-fluent`, framework `nextjs`)                                        |
+| Backend          | FastAPI 0.115.12, uvicorn, httpx, pydantic 2                                              |
+| Backend hosting  | Railway (nixpacks builder, healthcheck `/health`)                                         |
+| Database + auth  | Supabase (Postgres, Row Level Security, Supabase Auth email OTP)                          |
+| LLM              | Claude `claude-haiku-4-5-20251001` and `claude-sonnet-4-6` (Anthropic API)                |
+| Search           | Tavily (web, documents, public records), MuckRock REST + domain-scoped Tavily             |
+| Federal data     | openFDA, NHTSA, CPSC, Congress.gov, Regulations.gov, FEC, GAO, EPA ECHO, FOIA.gov         |
 
 ---
 
@@ -145,14 +145,14 @@ letter_text + drafting_strategy + key_elements + tips + submission_info
 
 `QueryInterpreter.interpret()` runs `claude-haiku-4-5-20251001` at `max_tokens=1000`. Haiku is used since this is intent classification and query rewriting with no reasoning depth required. The model returns valid JSON only, with these fields:
 
-| Field | Meaning |
-| --- | --- |
-| `intent` | Human-readable explanation of the search strategy |
-| `foia_queries` | 2-3 queries optimized for muckrock.com, different angles |
-| `document_queries` | Queries optimized for documentcloud.org |
+| Field                    | Meaning                                                   |
+| ------------------------ | --------------------------------------------------------- |
+| `intent`                 | Human-readable explanation of the search strategy         |
+| `foia_queries`           | 2-3 queries optimized for muckrock.com, different angles  |
+| `document_queries`       | Queries optimized for documentcloud.org                   |
 | `public_records_queries` | Queries for public government data, reports, and policies |
-| `agencies` | Agencies likely to hold the records |
-| `record_types` | Types of records to look for |
+| `agencies`               | Agencies likely to hold the records                       |
+| `record_types`           | Types of records to look for                              |
 
 On a parse failure the fallback returns the raw query in each field, so the pipeline never hard-fails.
 
@@ -168,11 +168,11 @@ After both finish, if a primary agency was found, the pipeline runs an agency-sc
 
 The prompt assembles three verified grounding layers so the model never invents legal authority:
 
-| Layer | Source | What it grounds |
-| --- | --- | --- |
-| 1. Statute text | Hardcoded `FOIA_STATUTE` dict (from uscode.house.gov, Office of the Law Revision Counsel) | Verbatim 5 U.S.C. 552 sections and exemptions b1-b9 |
-| 2. eCFR regulation text | `cfr_text` field on the agency profile (from eCFR, seeded into Supabase) | The agency's own FOIA procedures, deadlines, and fee schedules |
-| 3. MuckRock outcome intelligence | Tavily domain-scoped searches + the `AgencyIntelAgent` | Successful request patterns, denial patterns, exemption patterns |
+| Layer                            | Source                                                                                    | What it grounds                                                  |
+| -------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| 1. Statute text                  | Hardcoded `FOIA_STATUTE` dict (from uscode.house.gov, Office of the Law Revision Counsel) | Verbatim 5 U.S.C. 552 sections and exemptions b1-b9              |
+| 2. eCFR regulation text          | `cfr_text` field on the agency profile (from eCFR, seeded into Supabase)                  | The agency's own FOIA procedures, deadlines, and fee schedules   |
+| 3. MuckRock outcome intelligence | Tavily domain-scoped searches + the `AgencyIntelAgent`                                    | Successful request patterns, denial patterns, exemption patterns |
 
 The anti-hallucination rules are explicit. Claude may only cite statutes and regulations present in the verified context. It must not cite anything from training data, must not invent addresses or office names, and must say so if the context lacks a relevant citation rather than guessing.
 
@@ -212,15 +212,15 @@ The import runs the same research pipeline as the drafter, similar MuckRock requ
 
 ### 1.10 Model and cost summary for this pipeline
 
-| Flow | Model | max_tokens | Approx vendor cost/call |
-| --- | --- | --- | --- |
-| Query interpretation | Haiku 4.5 | 1000 | ~$0.008 |
-| Agency identification | Haiku 4.5 | 1000 | ~$0.011 |
-| Letter drafting | Sonnet 4.6 | 8000 | ~$0.060 |
-| Response analysis (text) | Sonnet 4.6 | 2000 | ~$0.035 |
-| Response analysis (with PDF) | Sonnet 4.6 | 2000 | ~$0.090 |
-| Follow-up letter | Haiku 4.5 | 2000 | ~$0.029 |
-| Appeal letter | Sonnet 4.6 | 2500 | ~$0.039 |
+| Flow                         | Model      | max_tokens | Approx vendor cost/call |
+| ---------------------------- | ---------- | ---------- | ----------------------- |
+| Query interpretation         | Haiku 4.5  | 1000       | ~$0.008                 |
+| Agency identification        | Haiku 4.5  | 1000       | ~$0.011                 |
+| Letter drafting              | Sonnet 4.6 | 8000       | ~$0.060                 |
+| Response analysis (text)     | Sonnet 4.6 | 2000       | ~$0.035                 |
+| Response analysis (with PDF) | Sonnet 4.6 | 2000       | ~$0.090                 |
+| Follow-up letter             | Haiku 4.5  | 2000       | ~$0.029                 |
+| Appeal letter                | Sonnet 4.6 | 2500       | ~$0.039                 |
 
 A full round trip of search, draft, file, analyze, and appeal costs roughly `$0.16` per request in vendor spend.
 
@@ -274,27 +274,27 @@ The registry is a single Python file, `signals_sources.py`, holding a module-lev
 
 The registry holds 19 sources, all enabled, all on a 1440-minute (daily) cadence:
 
-| # | source_id | label | family | strategy | agency | max items/run |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 | `gao_protests` | GAO Bid Protest Decision (via legal blogs) | enforcement | rss | GAO | 200 |
-| 2 | `epa_echo` | EPA ECHO Enforcement Action | enforcement | csv_bulk | EPA | 200 |
-| 3 | `fda_warning_letters` | FDA Warning Letter | enforcement | html | FDA | 50 |
-| 4 | `dhs_foia_log` | DHS FOIA Log Entry | research | pdf_vision | DHS | 6 |
-| 5 | `oversight_ig_reports` | Federal Inspector General Report | enforcement | rss | (none) | 100 |
-| 6 | `gao_reports` | GAO Report (audits, evaluations, testimony) | research | rss | GAO | 100 |
-| 7 | `osha_news` | OSHA news release | enforcement | rss | OSHA | 100 |
-| 8 | `irs_news` | IRS news release | enforcement | html | IRS | 40 |
-| 9 | `fda_drug_recalls` | FDA Drug Recall (openFDA) | recalls | json_api | FDA | 100 |
-| 10 | `fda_food_recalls` | FDA Food/Cosmetic Recall (openFDA) | recalls | json_api | FDA | 100 |
-| 11 | `fda_device_recalls` | FDA Medical Device Recall (openFDA) | recalls | json_api | FDA | 100 |
-| 12 | `cpsc_recalls` | CPSC Product Recall | recalls | json_api | CPSC | 100 |
-| 13 | `nhtsa_recalls` | NHTSA Vehicle Recall | recalls | json_api | NHTSA | 100 |
-| 14 | `congress_gov` | Congress.gov recent bill | research | json_api | Congress | 50 |
-| 15 | `regulations_gov` | Regulations.gov new docket | research | json_api | (none) | 50 |
-| 16 | `sec_press_releases` | SEC press release | enforcement | rss | SEC | 50 |
-| 17 | `ftc_press_releases` | FTC press release | enforcement | html | FTC | 40 |
-| 18 | `courtlistener_opinions` | Federal court opinion (CourtListener) | courts | rss | (none) | 50 |
-| 19 | `fec_enforcement` | FEC enforcement matter (MUR) | enforcement | json_api | FEC | 50 |
+| #   | source_id                | label                                       | family      | strategy   | agency   | max items/run |
+| --- | ------------------------ | ------------------------------------------- | ----------- | ---------- | -------- | ------------- |
+| 1   | `gao_protests`           | GAO Bid Protest Decision (via legal blogs)  | enforcement | rss        | GAO      | 200           |
+| 2   | `epa_echo`               | EPA ECHO Enforcement Action                 | enforcement | csv_bulk   | EPA      | 200           |
+| 3   | `fda_warning_letters`    | FDA Warning Letter                          | enforcement | html       | FDA      | 50            |
+| 4   | `dhs_foia_log`           | DHS FOIA Log Entry                          | research    | pdf_vision | DHS      | 6             |
+| 5   | `oversight_ig_reports`   | Federal Inspector General Report            | enforcement | rss        | (none)   | 100           |
+| 6   | `gao_reports`            | GAO Report (audits, evaluations, testimony) | research    | rss        | GAO      | 100           |
+| 7   | `osha_news`              | OSHA news release                           | enforcement | rss        | OSHA     | 100           |
+| 8   | `irs_news`               | IRS news release                            | enforcement | html       | IRS      | 40            |
+| 9   | `fda_drug_recalls`       | FDA Drug Recall (openFDA)                   | recalls     | json_api   | FDA      | 100           |
+| 10  | `fda_food_recalls`       | FDA Food/Cosmetic Recall (openFDA)          | recalls     | json_api   | FDA      | 100           |
+| 11  | `fda_device_recalls`     | FDA Medical Device Recall (openFDA)         | recalls     | json_api   | FDA      | 100           |
+| 12  | `cpsc_recalls`           | CPSC Product Recall                         | recalls     | json_api   | CPSC     | 100           |
+| 13  | `nhtsa_recalls`          | NHTSA Vehicle Recall                        | recalls     | json_api   | NHTSA    | 100           |
+| 14  | `congress_gov`           | Congress.gov recent bill                    | research    | json_api   | Congress | 50            |
+| 15  | `regulations_gov`        | Regulations.gov new docket                  | research    | json_api   | (none)   | 50            |
+| 16  | `sec_press_releases`     | SEC press release                           | enforcement | rss        | SEC      | 50            |
+| 17  | `ftc_press_releases`     | FTC press release                           | enforcement | html       | FTC      | 40            |
+| 18  | `courtlistener_opinions` | Federal court opinion (CourtListener)       | courts      | rss        | (none)   | 50            |
+| 19  | `fec_enforcement`        | FEC enforcement matter (MUR)                | enforcement | json_api   | FEC      | 50            |
 
 The four `family` values in use are `enforcement`, `research`, `recalls`, and `courts`. Sources 14, 15, and 19 are key-gated: the API keys (`api_data_gov_key`, `congress_gov_api_key`) are substituted into the URL at runtime rather than living in the registry.
 
@@ -302,13 +302,13 @@ The four `family` values in use are `enforcement`, `research`, `recalls`, and `c
 
 Each strategy module exposes `async fetch(cfg) -> list[RawItem]`. Five are wired into `STRATEGY_MAP`:
 
-| Strategy | What it handles |
-| --- | --- |
-| `rss` | One or more RSS 2.0 / Atom feeds via feedparser, with optional id and keyword regex filters |
-| `html` | Fetch a listing page, extract links with a regex, optionally fetch each detail page for body and date |
-| `json_api` | Paginated REST JSON (openFDA, NHTSA Socrata, CPSC, Congress, Regulations.gov, FEC) with placeholder substitution and lookback filtering |
-| `csv_bulk` | Download a ZIP or CSV, extract the named file, filter rows by date; only `epa_echo` has a row builder |
-| `pdf_vision` | Crawl a FOIA-logs index, download the newest unseen PDF, send it as a base64 document block to Claude for OCR + extraction |
+| Strategy     | What it handles                                                                                                                         |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `rss`        | One or more RSS 2.0 / Atom feeds via feedparser, with optional id and keyword regex filters                                             |
+| `html`       | Fetch a listing page, extract links with a regex, optionally fetch each detail page for body and date                                   |
+| `json_api`   | Paginated REST JSON (openFDA, NHTSA Socrata, CPSC, Congress, Regulations.gov, FEC) with placeholder substitution and lookback filtering |
+| `csv_bulk`   | Download a ZIP or CSV, extract the named file, filter rows by date; only `epa_echo` has a row builder                                   |
+| `pdf_vision` | Crawl a FOIA-logs index, download the newest unseen PDF, send it as a base64 document block to Claude for OCR + extraction              |
 
 The `pdf_vision` strategy is the interesting one. It sends scanned FOIA-log PDFs to `claude-haiku-4-5-20251001` (Haiku, since Sonnet 4.6 returned an error on document plus tool use) with `max_output_tokens=8000` and forced tool use. Claude does its own OCR. To stay cheap, the strategy stamps every processed PDF URL into the run metadata and aggregates the last 30 runs, so most daily runs find nothing new and exit nearly free.
 
@@ -332,15 +332,15 @@ Entity names are normalized to slugs: lowercase, strip legal suffixes (Inc, Corp
 
 The taxonomy is exactly 20 categories (for example `agency_enforcement`, `drug_recalls`, `court_opinions`, `foia_logs`, `legislation`). There are 7 persona bundles. A signal's persona tags are derived: a persona is included if its bundle overlaps the signal's category tags.
 
-| Persona | Category bundle size |
-| --- | --- |
-| `journalist` | 7 categories |
-| `pharma_analyst` | 4 |
-| `hedge_fund` | 6 |
-| `environmental` | 3 |
-| `policy_researcher` | 5 |
-| `legal_analyst` | 7 |
-| `consumer_safety` | 7 |
+| Persona             | Category bundle size |
+| ------------------- | -------------------- |
+| `journalist`        | 7 categories         |
+| `pharma_analyst`    | 4                    |
+| `hedge_fund`        | 6                    |
+| `environmental`     | 3                    |
+| `policy_researcher` | 5                    |
+| `legal_analyst`     | 7                    |
+| `consumer_safety`   | 7                    |
 
 ### 2.7 Dispatcher mechanics and cadence self-gating
 
@@ -387,27 +387,27 @@ insert into signal_patterns (visible = TRUE)
 
 ### 3.2 The 7 pattern types
 
-| Pattern type | Meaning |
-| --- | --- |
-| `compounding_risk` | Multiple agencies exposing one entity at once |
-| `coordinated_activity` | Multiple journalists or orgs filing on the same topic |
-| `trend_shift` | A quantitative cluster, for example 5+ similar enforcement actions |
-| `convergence` | Different signal types pointing at the same event |
-| `regulatory_cascade` | One agency's action triggers a follow-on by another within ~30 days |
+| Pattern type           | Meaning                                                                 |
+| ---------------------- | ----------------------------------------------------------------------- |
+| `compounding_risk`     | Multiple agencies exposing one entity at once                           |
+| `coordinated_activity` | Multiple journalists or orgs filing on the same topic                   |
+| `trend_shift`          | A quantitative cluster, for example 5+ similar enforcement actions      |
+| `convergence`          | Different signal types pointing at the same event                       |
+| `regulatory_cascade`   | One agency's action triggers a follow-on by another within ~30 days     |
 | `recall_to_litigation` | A product recall co-occurs with court or SEC action on the same company |
-| `oversight_to_action` | An IG report flags a program, enforcement hits within ~60 days |
+| `oversight_to_action`  | An IG report flags a program, enforcement hits within ~60 days          |
 
 ### 3.3 Key constants
 
-| Constant | Value | Purpose |
-| --- | --- | --- |
-| `LOOKBACK_DAYS` | 60 | Only signals from the last 60 days |
-| `MAX_SIGNALS_PER_RUN` | 400 | Corpus size, most recent by signal_date |
-| `MAX_PATTERNS_PER_RUN` | 8 | Cap on patterns produced per run |
-| `PATTERN_DEBOUNCE_HOURS` | 12 | At most 2 runs/day |
-| `DEDUP_LOOKBACK_DAYS` / `DEDUP_MAX_TITLES` | 7 / 30 | Recent-pattern context to skip repeats |
-| `SIGNAL_OVERLAP_DEDUP_THRESHOLD` | 0.5 | Jaccard on signal_ids to replace an older pattern |
-| `non_obviousness_score` | 0-10 | Claude self-rating, stored but not a drop threshold |
+| Constant                                   | Value  | Purpose                                             |
+| ------------------------------------------ | ------ | --------------------------------------------------- |
+| `LOOKBACK_DAYS`                            | 60     | Only signals from the last 60 days                  |
+| `MAX_SIGNALS_PER_RUN`                      | 400    | Corpus size, most recent by signal_date             |
+| `MAX_PATTERNS_PER_RUN`                     | 8      | Cap on patterns produced per run                    |
+| `PATTERN_DEBOUNCE_HOURS`                   | 12     | At most 2 runs/day                                  |
+| `DEDUP_LOOKBACK_DAYS` / `DEDUP_MAX_TITLES` | 7 / 30 | Recent-pattern context to skip repeats              |
+| `SIGNAL_OVERLAP_DEDUP_THRESHOLD`           | 0.5    | Jaccard on signal_ids to replace an older pattern   |
+| `non_obviousness_score`                    | 0-10   | Claude self-rating, stored but not a drop threshold |
 
 ### 3.4 Anti-hallucination grounding
 
@@ -429,28 +429,28 @@ A tool-using assistant available on every page via Cmd+K. It is read-only, groun
 
 ### 4.1 The 11 tools
 
-| # | Tool | What it does | Backend |
-| --- | --- | --- | --- |
-| 1 | `lookup_exemption` | FOIA exemption by number, with citation | Hardcoded dict, no API call |
-| 2 | `lookup_agency` | Agency profile plus transparency stats | `agency_profiles`, `agency_stats_cache` |
-| 3 | `search_web` | Trusted FOIA-domain search | Tavily, 8 whitelisted domains |
-| 4 | `search_web_broad` | Unrestricted web search (fallback) | Tavily, no domain limit |
-| 5 | `search_requests` | The user's tracked requests + summary stats | `tracked_requests` (by user_id) |
-| 6 | `get_request_detail` | One request with comms and analyses | `tracked_requests`, `communications`, `response_analyses` |
-| 7 | `get_hub_stats` | Transparency Hub stats | `agency_stats_cache` |
-| 8 | `search_muckrock` | Similar requests and outcomes | Tavily scoped to muckrock.com |
-| 9 | `search_my_discoveries` | The user's saved discoveries | `discovered_documents` |
-| 10 | `read_saved_document` | One saved doc with full live text | Supabase + Tavily extract |
-| 11 | `get_recent_signals` | Recent items from the signals feed | `foia_signals_feed` |
+| #   | Tool                    | What it does                                | Backend                                                   |
+| --- | ----------------------- | ------------------------------------------- | --------------------------------------------------------- |
+| 1   | `lookup_exemption`      | FOIA exemption by number, with citation     | Hardcoded dict, no API call                               |
+| 2   | `lookup_agency`         | Agency profile plus transparency stats      | `agency_profiles`, `agency_stats_cache`                   |
+| 3   | `search_web`            | Trusted FOIA-domain search                  | Tavily, 8 whitelisted domains                             |
+| 4   | `search_web_broad`      | Unrestricted web search (fallback)          | Tavily, no domain limit                                   |
+| 5   | `search_requests`       | The user's tracked requests + summary stats | `tracked_requests` (by user_id)                           |
+| 6   | `get_request_detail`    | One request with comms and analyses         | `tracked_requests`, `communications`, `response_analyses` |
+| 7   | `get_hub_stats`         | Transparency Hub stats                      | `agency_stats_cache`                                      |
+| 8   | `search_muckrock`       | Similar requests and outcomes               | Tavily scoped to muckrock.com                             |
+| 9   | `search_my_discoveries` | The user's saved discoveries                | `discovered_documents`                                    |
+| 10  | `read_saved_document`   | One saved doc with full live text           | Supabase + Tavily extract                                 |
+| 11  | `get_recent_signals`    | Recent items from the signals feed          | `foia_signals_feed`                                       |
 
 ### 4.2 The 4-tier accuracy ladder
 
-| Tier | Name | Trigger | Model |
-| --- | --- | --- | --- |
-| 1 | Instant lookup | Default; answerable from local verified data | Haiku 4.5 |
-| 2 | Trusted web search | Local data insufficient, Claude calls `search_web` | Haiku 4.5 |
-| 3 | Research agent | `search_web` returns no results (backend auto-escalates) | Upgrades to Sonnet 4.6 |
-| 4 | Graceful fallback | Still nothing useful | No new call, emits fallback resource links |
+| Tier | Name               | Trigger                                                  | Model                                      |
+| ---- | ------------------ | -------------------------------------------------------- | ------------------------------------------ |
+| 1    | Instant lookup     | Default; answerable from local verified data             | Haiku 4.5                                  |
+| 2    | Trusted web search | Local data insufficient, Claude calls `search_web`       | Haiku 4.5                                  |
+| 3    | Research agent     | `search_web` returns no results (backend auto-escalates) | Upgrades to Sonnet 4.6                     |
+| 4    | Graceful fallback  | Still nothing useful                                     | No new call, emits fallback resource links |
 
 The escalation is backend-driven, not model-decided. When `search_web` returns empty results, the backend emits a `search_web_broad` tool call and upgrades the model to `claude-sonnet-4-6` for the rest of the loop (max 5 iterations).
 
@@ -483,12 +483,12 @@ where rt_normalized = max(0, 1 - min(avg_response_time / 120, 1))
       (a falsy/zero response time is treated as 60 days)
 ```
 
-| Component | Weight | Notes |
-| --- | --- | --- |
-| Success rate | 40% | Direct linear, higher is better |
-| Response speed | 30% | Normalized against a 120-day max, negatives clamped to 0 |
-| Fee rate | 15% | Lower fee rate is better |
-| Portal availability | 15% | Binary 15 points; at the jurisdiction level, awarded when >50% of agencies have a portal |
+| Component           | Weight | Notes                                                                                    |
+| ------------------- | ------ | ---------------------------------------------------------------------------------------- |
+| Success rate        | 40%    | Direct linear, higher is better                                                          |
+| Response speed      | 30%    | Normalized against a 120-day max, negatives clamped to 0                                 |
+| Fee rate            | 15%    | Lower fee rate is better                                                                 |
+| Portal availability | 15%    | Binary 15 points; at the jurisdiction level, awarded when >50% of agencies have a portal |
 
 ### 5.2 Federal coverage
 
@@ -512,26 +512,26 @@ The backend connects with the service-role key, which bypasses RLS, so user scop
 
 ### 6.1 Table-by-table reference
 
-| Table | RLS | Purpose | Key columns |
-| --- | --- | --- | --- |
-| `agency_profiles` | No | Static regulatory content per agency, seeded + eCFR `cfr_text` | `abbreviation` (PK), `name`, `foia_email`, `foia_regulation`, `cfr_summary`, `cfr_text`, `exemption_tendencies`, `routing_notes` |
-| `agency_stats_cache` | No | MuckRock aggregate stats, weekly refresh | `id` (PK = MuckRock ID), `name`, `slug`, `success_rate`, `average_response_time`, `fee_rate`, `has_portal`, `transparency_score`, plus ~14 `number_requests_*` outcome counts |
-| `jurisdiction_cache` | No | MuckRock jurisdiction metadata | `id` (PK), `name`, `slug`, `abbrev`, `level`, `parent_id` |
-| `jurisdiction_stats_cache` | No | Aggregated stats per jurisdiction | `jurisdiction_id` (PK), `total_agencies`, `overall_success_rate`, `median_response_time`, `portal_coverage_pct`, `transparency_score`, `top_agency_id` |
-| `agency_intel_cache` | No | Dynamic MuckRock outcomes, 24h TTL | `agency_abbreviation` (PK), `data` (JSONB), `cached_at` |
-| `tracked_requests` | Yes | One row per tracked FOIA request | `id` (PK), `user_id`, `title`, `description`, `agency` (JSONB), `letter_text`, `status`, `filed_date`, `due_date`, `drafting_strategy` (JSONB), `agency_intel` (JSONB), `similar_requests` (JSONB) |
-| `communications` | Yes | Correspondence log per request | `id` (PK), `request_id`, `direction`, `comm_type`, `subject`, `body`, `date` |
-| `response_analyses` | Yes | Claude analysis of a response | `id` (PK), `request_id`, `communication_id`, `exemptions_cited` (JSONB), `exemptions_valid` (JSONB), `grounds_for_appeal` (JSONB), `recommended_action`, `summary` |
-| `user_personas` | Yes | Per-user persona subscriptions | `(user_id, persona_id)` composite PK |
-| `user_watchlists` | Yes | Forward-compat watchlist | `id` (PK), `user_id`, `watchlist_type`, `value` |
-| `discovered_documents` | Yes | Saved documents library | `id` (PK), `user_id`, `source`, `title`, `url`, `status`, `tags`, `tracked_request_id`; UNIQUE(user_id, url) |
-| `saved_searches` | Yes | Saved discovery queries | `id` (PK), `user_id`, `query`, `interpretation` (JSONB), `result_snapshot` (JSONB), `last_run_at` |
-| `personas` | No | Static persona catalog | `id` (PK), `name`, `category_ids` |
-| `foia_signals_feed` | No | Core signal feed | `id` (PK), `source`, `source_id`, `title`, `summary`, `signal_date`, `agency_codes`, `entities` (JSONB), `persona_tags`, `category_tags`, `entity_slugs`, `priority`, `requester`; UNIQUE(source, source_id) |
-| `entity_bios` | No | Cached AI entity bios | `(entity_type, entity_slug)` composite PK, `display_name`, `bio`, `signal_count` |
-| `signal_patterns` | No | AI-detected cross-source patterns | `id` (PK), `title`, `narrative`, `pattern_type`, `signal_ids` (UUID[]), `entity_slugs`, `non_obviousness_score`, `visible` |
-| `signals_source_runs` | No (admin) | Ingest health per run | `id` (PK), `source_id`, `status`, `items_fetched`, `items_inserted`, `claude_input_tokens`, `claude_output_tokens`, `error_message`, `metadata` (JSONB) |
-| `user_profiles` | Yes (SELECT only) | Email wall + Stripe paywall foundation | `user_id` (PK), `subscription_status`, `stripe_customer_id`, `stripe_subscription_id`, `current_period_end` |
+| Table                      | RLS               | Purpose                                                        | Key columns                                                                                                                                                                                                  |
+| -------------------------- | ----------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `agency_profiles`          | No                | Static regulatory content per agency, seeded + eCFR `cfr_text` | `abbreviation` (PK), `name`, `foia_email`, `foia_regulation`, `cfr_summary`, `cfr_text`, `exemption_tendencies`, `routing_notes`                                                                             |
+| `agency_stats_cache`       | No                | MuckRock aggregate stats, weekly refresh                       | `id` (PK = MuckRock ID), `name`, `slug`, `success_rate`, `average_response_time`, `fee_rate`, `has_portal`, `transparency_score`, plus ~14 `number_requests_*` outcome counts                                |
+| `jurisdiction_cache`       | No                | MuckRock jurisdiction metadata                                 | `id` (PK), `name`, `slug`, `abbrev`, `level`, `parent_id`                                                                                                                                                    |
+| `jurisdiction_stats_cache` | No                | Aggregated stats per jurisdiction                              | `jurisdiction_id` (PK), `total_agencies`, `overall_success_rate`, `median_response_time`, `portal_coverage_pct`, `transparency_score`, `top_agency_id`                                                       |
+| `agency_intel_cache`       | No                | Dynamic MuckRock outcomes, 24h TTL                             | `agency_abbreviation` (PK), `data` (JSONB), `cached_at`                                                                                                                                                      |
+| `tracked_requests`         | Yes               | One row per tracked FOIA request                               | `id` (PK), `user_id`, `title`, `description`, `agency` (JSONB), `letter_text`, `status`, `filed_date`, `due_date`, `drafting_strategy` (JSONB), `agency_intel` (JSONB), `similar_requests` (JSONB)           |
+| `communications`           | Yes               | Correspondence log per request                                 | `id` (PK), `request_id`, `direction`, `comm_type`, `subject`, `body`, `date`                                                                                                                                 |
+| `response_analyses`        | Yes               | Claude analysis of a response                                  | `id` (PK), `request_id`, `communication_id`, `exemptions_cited` (JSONB), `exemptions_valid` (JSONB), `grounds_for_appeal` (JSONB), `recommended_action`, `summary`                                           |
+| `user_personas`            | Yes               | Per-user persona subscriptions                                 | `(user_id, persona_id)` composite PK                                                                                                                                                                         |
+| `user_watchlists`          | Yes               | Forward-compat watchlist                                       | `id` (PK), `user_id`, `watchlist_type`, `value`                                                                                                                                                              |
+| `discovered_documents`     | Yes               | Saved documents library                                        | `id` (PK), `user_id`, `source`, `title`, `url`, `status`, `tags`, `tracked_request_id`; UNIQUE(user_id, url)                                                                                                 |
+| `saved_searches`           | Yes               | Saved discovery queries                                        | `id` (PK), `user_id`, `query`, `interpretation` (JSONB), `result_snapshot` (JSONB), `last_run_at`                                                                                                            |
+| `personas`                 | No                | Static persona catalog                                         | `id` (PK), `name`, `category_ids`                                                                                                                                                                            |
+| `foia_signals_feed`        | No                | Core signal feed                                               | `id` (PK), `source`, `source_id`, `title`, `summary`, `signal_date`, `agency_codes`, `entities` (JSONB), `persona_tags`, `category_tags`, `entity_slugs`, `priority`, `requester`; UNIQUE(source, source_id) |
+| `entity_bios`              | No                | Cached AI entity bios                                          | `(entity_type, entity_slug)` composite PK, `display_name`, `bio`, `signal_count`                                                                                                                             |
+| `signal_patterns`          | No                | AI-detected cross-source patterns                              | `id` (PK), `title`, `narrative`, `pattern_type`, `signal_ids` (UUID[]), `entity_slugs`, `non_obviousness_score`, `visible`                                                                                   |
+| `signals_source_runs`      | No (admin)        | Ingest health per run                                          | `id` (PK), `source_id`, `status`, `items_fetched`, `items_inserted`, `claude_input_tokens`, `claude_output_tokens`, `error_message`, `metadata` (JSONB)                                                      |
+| `user_profiles`            | Yes (SELECT only) | Email wall + Stripe paywall foundation                         | `user_id` (PK), `subscription_status`, `stripe_customer_id`, `stripe_subscription_id`, `current_period_end`                                                                                                  |
 
 ### 6.2 Notable JSONB sub-structures
 
@@ -567,13 +567,13 @@ Access control is currently Phase 1: any signed-in user is `free`, anonymous is 
 
 All figures are vendor cost to us, at late-2025 list prices (Sonnet 4 `$3`/`$15` per MTok in/out, Haiku 4.5 `$1`/`$5`). No prompt caching is used yet.
 
-| Per-user tier | Monthly vendor cost |
-| --- | --- |
-| Light user | ~$0.33 |
-| Active individual | ~$3.77 |
-| Power user | ~$13.08 |
-| Pro user | ~$25.52 |
-| Enterprise heavy user | ~$71.53 |
+| Per-user tier         | Monthly vendor cost |
+| --------------------- | ------------------- |
+| Light user            | ~$0.33              |
+| Active individual     | ~$3.77              |
+| Power user            | ~$13.08             |
+| Pro user              | ~$25.52             |
+| Enterprise heavy user | ~$71.53             |
 
 A full request round trip is about `$0.16`. The signals subsystem targets a `~$75`/month ceiling: per-signal Haiku extraction at `~$2-5`/month and the pattern engine at up to `~$45`/month at the debounce ceiling. Hub, insights, and jurisdiction refreshes call no Claude and cost `~$0.10-$0.50`/month. Non-Claude variable costs (mostly Tavily at `~$0.005`/search) run `~$0.50-$2`/month per active user. The top cost-reduction lever identified is prompt caching on the letter-drafting system prompt, which would cut a draft by roughly 70%.
 

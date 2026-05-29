@@ -73,19 +73,19 @@ graph TD
 
 ## Stack at a glance
 
-| Layer | Technology |
-| --- | --- |
-| Base model | Stable Diffusion XL fine-tune `juggernaut_x_v10`, pipeline type XL_CONTROLNET |
-| Conditioning | ControlNet-Union SDXL (`xinsir/controlnet-union-sdxl-1.0`), control modes `[2, 3, 1]` |
-| Control maps | `controlnet_aux.CannyDetector` (50/100), ZoeDepth (`lllyasviel/Annotators`) |
-| Fine tuning | HuggingFace Diffusers LoRA trainer, 9 denim wash adapters plus per-category LoRAs |
-| Inference serving | NVIDIA Triton 25.11 (Python backend), TensorRT 10.14, NVIDIA `demo_diffusion` SDXL pipeline, CUDA 12.4 |
-| Postprocess | RMBG2 (Triton + local ONNX fallback), `kornia` GPU color correction |
-| Hardware | NVIDIA H100 80GB on GCP a3-highgpu machines, single-GPU inference |
-| API | FastAPI gateway, Auth0 + JWT (RS256 via JWKS), asyncpg, PostgreSQL on AWS RDS |
-| Async / queue | Celery (concurrency 1), Redis (GCP Memorystore) |
-| Infra | GKE, Google Artifact Registry, Hyperdisk ML, Vertex AI custom jobs, Cloud Scheduler, Cloud Functions, AWS S3, GCS (`limn-prod`) |
-| Eval / data | Mass-testing harness with HTML A/B diff reports, GPT-4 Vision captioning, custom scrapers, rembg |
+| Layer             | Technology                                                                                                                      |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Base model        | Stable Diffusion XL fine-tune `juggernaut_x_v10`, pipeline type XL_CONTROLNET                                                   |
+| Conditioning      | ControlNet-Union SDXL (`xinsir/controlnet-union-sdxl-1.0`), control modes `[2, 3, 1]`                                           |
+| Control maps      | `controlnet_aux.CannyDetector` (50/100), ZoeDepth (`lllyasviel/Annotators`)                                                     |
+| Fine tuning       | HuggingFace Diffusers LoRA trainer, 9 denim wash adapters plus per-category LoRAs                                               |
+| Inference serving | NVIDIA Triton 25.11 (Python backend), TensorRT 10.14, NVIDIA `demo_diffusion` SDXL pipeline, CUDA 12.4                          |
+| Postprocess       | RMBG2 (Triton + local ONNX fallback), `kornia` GPU color correction                                                             |
+| Hardware          | NVIDIA H100 80GB on GCP a3-highgpu machines, single-GPU inference                                                               |
+| API               | FastAPI gateway, Auth0 + JWT (RS256 via JWKS), asyncpg, PostgreSQL on AWS RDS                                                   |
+| Async / queue     | Celery (concurrency 1), Redis (GCP Memorystore)                                                                                 |
+| Infra             | GKE, Google Artifact Registry, Hyperdisk ML, Vertex AI custom jobs, Cloud Scheduler, Cloud Functions, AWS S3, GCS (`limn-prod`) |
+| Eval / data       | Mass-testing harness with HTML A/B diff reports, GPT-4 Vision captioning, custom scrapers, rembg                                |
 
 ## Live + Code
 
@@ -115,10 +115,10 @@ The client uploads one flat sketch. Everything downstream is derived server-side
 
 ### 1.2 The two derived control maps
 
-| Control map | Producer | Settings |
-| --- | --- | --- |
-| Canny edges | `controlnet_aux.CannyDetector` | `low_threshold=50`, `high_threshold=100` |
-| Depth | `ZoeDetector.from_pretrained("lllyasviel/Annotators")` on CUDA | `output_type="np"` |
+| Control map | Producer                                                       | Settings                                 |
+| ----------- | -------------------------------------------------------------- | ---------------------------------------- |
+| Canny edges | `controlnet_aux.CannyDetector`                                 | `low_threshold=50`, `high_threshold=100` |
+| Depth       | `ZoeDetector.from_pretrained("lllyasviel/Annotators")` on CUDA | `output_type="np"`                       |
 
 The original sketch itself is the third control image (used as the scribble modality). The worker hands all three to the GPU pipeline as UINT8 tensors of shape `[1, H, W, C]`.
 
@@ -141,11 +141,11 @@ One ControlNet model handles all three control signals in a single forward pass,
 
 The three control images are sent over gRPC as `controlnet_image_0/1/2` in the order sketch (scribble), Canny, depth. Each modality has its own conditioning scale.
 
-| Slot | Modality | Control mode | Default scale |
-| --- | --- | --- | --- |
-| 0 | Scribble (the raw sketch) | 2 | 0.30 |
-| 1 | Canny edges | 3 | 0.25 |
-| 2 | Depth | 1 | 0.60 |
+| Slot | Modality                  | Control mode | Default scale |
+| ---- | ------------------------- | ------------ | ------------- |
+| 0    | Scribble (the raw sketch) | 2            | 0.30          |
+| 1    | Canny edges               | 3            | 0.25          |
+| 2    | Depth                     | 1            | 0.60          |
 
 The per-modality scales default to `[0.3, 0.25, 0.6]` (`CONTROLNET_SCALES` env default `'0.3,0.25,0.6'`, with the same hardcoded fallback in `ImageGenerator`). Depth carries the most weight, since the garment's 3D form drives the realism of the render, while the scribble and Canny keep the silhouette honest to the sketch.
 
@@ -161,28 +161,28 @@ The diffusion model runs as a Triton Python backend (`TritonPythonModel.execute(
 
 ### 3.1 Generation parameters
 
-| Parameter | Value |
-| --- | --- |
-| Base model | `juggernaut_x_v10` (pipeline type XL_CONTROLNET) |
-| Resolution | 1536 x 1536 |
-| Steps | 30 |
-| Guidance scale | 5.0 |
-| Scheduler | Euler |
-| Image strength | 0.3 |
-| VAE scaling factor | 0.13025 |
-| ONNX opset | 21 |
+| Parameter          | Value                                            |
+| ------------------ | ------------------------------------------------ |
+| Base model         | `juggernaut_x_v10` (pipeline type XL_CONTROLNET) |
+| Resolution         | 1536 x 1536                                      |
+| Steps              | 30                                               |
+| Guidance scale     | 5.0                                              |
+| Scheduler          | Euler                                            |
+| Image strength     | 0.3                                              |
+| VAE scaling factor | 0.13025                                          |
+| ONNX opset         | 21                                               |
 
 ### 3.2 TensorRT engine configuration
 
 The engine is built with CUDA graphs, refit enabled, the highest optimization level, and a small LoRA cache.
 
-| Setting | Value |
-| --- | --- |
-| `_use_cuda_graph` | True |
-| `_enable_refit` | True |
-| `_optimization_level` | 5 |
-| `_enable_all_tactics` | True |
-| `_lora_cache_size` | 5 |
+| Setting               | Value |
+| --------------------- | ----- |
+| `_use_cuda_graph`     | True  |
+| `_enable_refit`       | True  |
+| `_optimization_level` | 5     |
+| `_enable_all_tactics` | True  |
+| `_lora_cache_size`    | 5     |
 
 The pipeline uses FP16 precision, consistent with the `demo_diffusion` default and the documented tech stack.
 
@@ -200,9 +200,9 @@ There are two LoRA paths. `generate()` applies a single adapter. `generate_multi
 
 Multi-LoRA blend recipes combine wash adapters at inference time to create new variations without retraining. Two verified recipes:
 
-| Blend | Recipe |
-| --- | --- |
-| `faded-wash` | `mtd_denim_light_wash` @0.4 + `mtd_denim_bleach_wash` @0.4 |
+| Blend               | Recipe                                                     |
+| ------------------- | ---------------------------------------------------------- |
+| `faded-wash`        | `mtd_denim_light_wash` @0.4 + `mtd_denim_bleach_wash` @0.4 |
 | `bleach-stone-wash` | `mtd_denim_bleach_wash` @0.4 + `mtd_denim_stone_wash` @0.4 |
 
 <div class="row">

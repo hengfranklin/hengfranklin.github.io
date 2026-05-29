@@ -70,7 +70,9 @@
   border: 1px solid var(--global-divider-color);
   text-decoration: none;
   color: inherit;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 
   &:hover,
   &:focus-visible {
@@ -213,14 +215,16 @@
   border: 1px solid var(--global-divider-color);
   text-decoration: none;
   color: inherit;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 
   &:hover,
   &:focus-visible {
     text-decoration: none;
     color: inherit;
     transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.10);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.1);
   }
 }
 

@@ -16,7 +16,7 @@ mermaid:
 
 ## Overview
 
-A computer-vision pipeline for chest CT that converts sparse radiologist annotations into a dense, quantitative description of every mucus plug in the lung: segmented in 3D, localized to a specific airway branch and generation, and reduced to interpretable measures of plug burden and predicted airflow obstruction. The pipeline output drives the **Quantitative Assessment of Airway Mucus Plug Pathology (qAAMP)** framework published in *JCI Insight*.
+A computer-vision pipeline for chest CT that converts sparse radiologist annotations into a dense, quantitative description of every mucus plug in the lung: segmented in 3D, localized to a specific airway branch and generation, and reduced to interpretable measures of plug burden and predicted airflow obstruction. The pipeline output drives the **Quantitative Assessment of Airway Mucus Plug Pathology (qAAMP)** framework published in _JCI Insight_.
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0 text-center">
@@ -29,7 +29,7 @@ A computer-vision pipeline for chest CT that converts sparse radiologist annotat
 
 ## Publication
 
-📄 Huang BK, Elicker BM, Henry TS, Kallianos KG, Hahn LD, Tang M, **Heng F**, McCulloch CE, *et al.*, Woodruff PG, Fahy JV, for the NHLBI Severe Asthma Research Program (SARP). **"Persistent mucus plugs in proximal airways are consequential for airflow limitation in asthma."** *JCI Insight* 2024;9(3):e174124 (published online Dec 2023). [doi.org/10.1172/jci.insight.174124](https://insight.jci.org/articles/view/174124)
+📄 Huang BK, Elicker BM, Henry TS, Kallianos KG, Hahn LD, Tang M, **Heng F**, McCulloch CE, _et al._, Woodruff PG, Fahy JV, for the NHLBI Severe Asthma Research Program (SARP). **"Persistent mucus plugs in proximal airways are consequential for airflow limitation in asthma."** _JCI Insight_ 2024;9(3):e174124 (published online Dec 2023). [doi.org/10.1172/jci.insight.174124](https://insight.jci.org/articles/view/174124)
 
 ## Pipeline
 
@@ -115,7 +115,7 @@ Each segmented plug produces:
 
 ## 4. Lung + Airway Tree Model
 
-The clinical interpretation of a plug depends entirely on *where* in the airway tree it sits. A two-stage anatomic model gives every plug a precise tree location.
+The clinical interpretation of a plug depends entirely on _where_ in the airway tree it sits. A two-stage anatomic model gives every plug a precise tree location.
 
 ### Lung + airway segmentation
 
@@ -190,7 +190,7 @@ The pipeline failed to converge on RS for 3 of 97 scans (~3%); test–retest rep
 
 ## 8. Obstructed Lung Volume Percentage (OLVP)
 
-Rather than going through a flow model, OLVP estimates how much of the *lung volume* sits behind a plugged airway. The pipeline performs a per-lobe nearest-airway-termination-point assignment for every parenchymal voxel: a Voronoi partition over termination points constrained within a lobe (the per-lobe constraint prevents voxels from being assigned across a fissure).
+Rather than going through a flow model, OLVP estimates how much of the _lung volume_ sits behind a plugged airway. The pipeline performs a per-lobe nearest-airway-termination-point assignment for every parenchymal voxel: a Voronoi partition over termination points constrained within a lobe (the per-lobe constraint prevents voxels from being assigned across a fissure).
 
 - A subregion is labeled **obstructed** if its terminal airway has a plug.
 - Per lobe: `OLVP = 100 · V_obstructed / V_lobe`
@@ -254,12 +254,12 @@ The same effect surfaces in the per-plug Resistance Score (RS-per-plug): each pr
 
 The pipeline's per-scan output is bundled as the **Quantitative Assessment of Airway Mucus Plug Pathology (qAAMP)**: a structured set of CT-derived biomarkers ready for use as clinical-trial endpoints:
 
-| Category | Metrics |
-|---|---|
-| **Plug burden** | mucus segment score, mucus slice score, mucus plug count, total plug volume |
-| **Per-plug shape** | length, diameter, volume (per plug + cohort averages), stubby / stringy phenotype label |
-| **Anatomic** | airway mucus plug map (lobe, generation per plug) |
-| **Integrated impact** | Resistance Score (RS), Obstructed Lung Volume Percentage (OLVP) |
+| Category              | Metrics                                                                                 |
+| --------------------- | --------------------------------------------------------------------------------------- |
+| **Plug burden**       | mucus segment score, mucus slice score, mucus plug count, total plug volume             |
+| **Per-plug shape**    | length, diameter, volume (per plug + cohort averages), stubby / stringy phenotype label |
+| **Anatomic**          | airway mucus plug map (lobe, generation per plug)                                       |
+| **Integrated impact** | Resistance Score (RS), Obstructed Lung Volume Percentage (OLVP)                         |
 
 Plug length and volume also correlated with type-2 inflammation markers (blood eosinophils and sputum eosinophil peroxidase), linking the imaging biomarkers to the underlying biology.
 

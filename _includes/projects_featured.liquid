@@ -1,4 +1,4 @@
-{% assign featured_projects = site.projects | where: "featured", true | sort: "importance" %}
+{% assign featured_projects = site.projects | where: 'featured', true | sort: 'importance' %}
 {% if featured_projects.size > 0 %}
   <section class="projects-featured">
     <div class="featured-eyebrow-label">Featured</div>
@@ -17,7 +17,9 @@
             </div>
           {% endif %}
           <div class="featured-body">
-            {% if project.role %}<div class="featured-eyebrow">{{ project.role }}</div>{% endif %}
+            {% if project.role %}
+              <div class="featured-eyebrow">{{ project.role }}</div>
+            {% endif %}
             <h3 class="featured-title">{{ project.title }}</h3>
             <p class="featured-text">{{ project.description }}</p>
             <div class="featured-cta">View project &rarr;</div>

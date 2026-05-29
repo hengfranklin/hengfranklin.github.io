@@ -77,12 +77,12 @@ graph LR
 
 ## Stack at a glance
 
-| Layer | Technology |
-| --- | --- |
-| Language / numerics | Python (NumPy, SciPy) |
-| Deep learning | Custom 3D CNN regressor, MAE loss, heavy regularization |
-| Statistical modeling | Logistic GLM, logit link, univariate and multivariate, via scikit-learn / statsmodels |
-| Medical imaging I/O | In-house DICOM preprocessing: soft-tissue axial selection, 1 mm resampling, parenchymal windowing, resize |
+| Layer                | Technology                                                                                                |
+| -------------------- | --------------------------------------------------------------------------------------------------------- |
+| Language / numerics  | Python (NumPy, SciPy)                                                                                     |
+| Deep learning        | Custom 3D CNN regressor, MAE loss, heavy regularization                                                   |
+| Statistical modeling | Logistic GLM, logit link, univariate and multivariate, via scikit-learn / statsmodels                     |
+| Medical imaging I/O  | In-house DICOM preprocessing: soft-tissue axial selection, 1 mm resampling, parenchymal windowing, resize |
 
 The write-up names only the Python numerical and statistical stack above. No deep-learning framework is recorded for this work, so none is asserted here.
 
@@ -90,12 +90,12 @@ The write-up names only the Python numerical and statistical stack above. No dee
 
 ## 1. Cohort
 
-| Item | Value |
-| --- | --- |
-| Studies | 3,692 non-contrast head CT studies |
-| Patients | 3,692 unique patients |
-| Site | UCSF |
-| Date range | March 2017 – March 2018 |
+| Item                  | Value                                   |
+| --------------------- | --------------------------------------- |
+| Studies               | 3,692 non-contrast head CT studies      |
+| Patients              | 3,692 unique patients                   |
+| Site                  | UCSF                                    |
+| Date range            | March 2017 – March 2018                 |
 | Per-patient selection | Earliest study only when multiple exist |
 
 One scan per patient is a deliberate choice. When a patient had multiple studies, we kept the earliest one. That minimizes contamination from post-surgical and post-hemorrhage follow-up scans, where the brain's appearance no longer reflects the patient's baseline state and would bias the perceived-age estimate.
@@ -115,13 +115,13 @@ An in-house pipeline runs on every study before it reaches the model. Each step 
 
 Stage one is a custom 3D convolutional neural network trained as a regressor over continuous age in years.
 
-| Component | Detail |
-| --- | --- |
-| Model family | Custom 3D CNN regressor |
-| Head | Two fully connected layers |
-| Regularization | Heavy regularization throughout |
-| Loss | Mean absolute error (MAE) |
-| Output | Single scalar: predicted brain age in years |
+| Component      | Detail                                      |
+| -------------- | ------------------------------------------- |
+| Model family   | Custom 3D CNN regressor                     |
+| Head           | Two fully connected layers                  |
+| Regularization | Heavy regularization throughout             |
+| Loss           | Mean absolute error (MAE)                   |
+| Output         | Single scalar: predicted brain age in years |
 
 The loss choice is deliberate. We train with MAE rather than MSE because the per-patient residual itself is the downstream feature. MAE training keeps the residual on the same scale as the target, in years, which is what PTAD needs to be interpretable as an age gap.
 
@@ -141,10 +141,10 @@ PTAD is signed. A positive value means the brain looks older than the patient's 
 
 Stage two regresses PTAD against systemic conditions with a generalized linear model using a logit link, that is, logistic regression. It runs in two modes.
 
-| Mode | Predictors | Question it answers |
-| --- | --- | --- |
-| Univariate | PTAD alone, one model per condition | Does PTAD on its own associate with the condition? |
-| Multivariate | PTAD plus other patient covariates | Does PTAD carry information independent of standard risk factors? |
+| Mode         | Predictors                          | Question it answers                                               |
+| ------------ | ----------------------------------- | ----------------------------------------------------------------- |
+| Univariate   | PTAD alone, one model per condition | Does PTAD on its own associate with the condition?                |
+| Multivariate | PTAD plus other patient covariates  | Does PTAD carry information independent of standard risk factors? |
 
 Conditions in the panel include hypertension, diabetes, hypercholesterolemia, and polysubstance abuse, among others. The full disease panel beyond these named conditions is not enumerated here.
 

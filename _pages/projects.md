@@ -12,6 +12,7 @@ nav_order: 2
 {% assign earlier = site.projects | where: "category", "earlier-work" | sort: "importance" %}
 
 {% if cv_ml.size > 0 %}
+
   <section class="projects-page-section">
     <header class="projects-section-header">
       <h2>Computer Vision &amp; ML</h2>
@@ -32,6 +33,7 @@ nav_order: 2
 {% endif %}
 
 {% if ai_eng.size > 0 %}
+
   <section class="projects-page-section">
     <header class="projects-section-header">
       <h2>Full-Stack AI Engineering</h2>
@@ -46,6 +48,7 @@ nav_order: 2
 {% endif %}
 
 {% if earlier.size > 0 %}
+
   <section class="projects-page-section">
     <header class="projects-section-header">
       <h2>Earlier Work</h2>

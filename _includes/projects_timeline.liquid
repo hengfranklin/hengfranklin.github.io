@@ -1,7 +1,9 @@
 <div class="timeline-item">
   <div class="timeline-meta">
     <div class="timeline-date">{{ project.date_display }}</div>
-    {% if project.role %}<div class="timeline-role">{{ project.role }}</div>{% endif %}
+    {% if project.role %}
+      <div class="timeline-role">{{ project.role }}</div>
+    {% endif %}
   </div>
   <div class="timeline-axis">
     <div class="timeline-dot"></div>

@@ -24,7 +24,7 @@ This page is both a project write-up and a study guide. The top sections give a 
 
 ## Publication
 
-📄 Sahiner A, **Heng F**, Balamurugan A, Zakhor A. **"In Situ Width Estimation of Biofuel Plant Stems."** *Electronic Imaging* 2019, Vol. 31, Issue 13, pp. 138-1–138-7. DOI 10.2352/ISSN.2470-1173.2019.13.COIMG-138. [Paper PDF](https://www-video.eecs.berkeley.edu/papers/asahiner/sahiner-stem-width-spie-2018.pdf) · [Conference page](https://library.imaging.org/ei/articles/31/13/art00009)
+📄 Sahiner A, **Heng F**, Balamurugan A, Zakhor A. **"In Situ Width Estimation of Biofuel Plant Stems."** _Electronic Imaging_ 2019, Vol. 31, Issue 13, pp. 138-1–138-7. DOI 10.2352/ISSN.2470-1173.2019.13.COIMG-138. [Paper PDF](https://www-video.eecs.berkeley.edu/papers/asahiner/sahiner-stem-width-spie-2018.pdf) · [Conference page](https://library.imaging.org/ei/articles/31/13/art00009)
 
 ## Why stem width matters
 
@@ -83,13 +83,13 @@ This pipeline extends an earlier Berkeley method (Baharav, Bariya & Zakhor 2017)
 
 ## Stack at a glance
 
-| Layer | Technology |
-| --- | --- |
-| Language / numerics | Python (NumPy, SciPy, scikit-image, scikit-learn) |
-| Detection | Faster R-CNN with ResNet-101 backbone, fine-tuned on 2,000 hand-labeled corn + sorghum images |
-| Image processing | Wiener filter, histogram equalization, Canny edges, morphological closing (`30×15` coarse, `12×4` fine), connected-component analysis, RANSAC line fitting (independent per side) |
-| Geometry | Connected-component orientation for the major axis, perpendicular-probe sampling for boundary points, pinhole depth-to-metric conversion |
-| Hardware | Intel RealSense R200 stereo camera (RGB + IR + stereo depth) on a wheeled robot |
+| Layer               | Technology                                                                                                                                                                        |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Language / numerics | Python (NumPy, SciPy, scikit-image, scikit-learn)                                                                                                                                 |
+| Detection           | Faster R-CNN with ResNet-101 backbone, fine-tuned on 2,000 hand-labeled corn + sorghum images                                                                                     |
+| Image processing    | Wiener filter, histogram equalization, Canny edges, morphological closing (`30×15` coarse, `12×4` fine), connected-component analysis, RANSAC line fitting (independent per side) |
+| Geometry            | Connected-component orientation for the major axis, perpendicular-probe sampling for boundary points, pinhole depth-to-metric conversion                                          |
+| Hardware            | Intel RealSense R200 stereo camera (RGB + IR + stereo depth) on a wheeled robot                                                                                                   |
 
 ---
 
@@ -230,11 +230,11 @@ Two evaluation datasets, one in-situ and one phantom.
 
 The headline numbers: 13.5% average absolute pixel error on corn across 153 estimates, and 13.2% average absolute metric error on phantom sorghum across 149 estimates.
 
-| Dataset | Domain | Estimates generated | Discarded | Avg % Absolute Error |
-| --- | --- | --- | --- | --- |
-| Corn (in situ) | Pixel | 153 / 531 | 71% (378) | **13.5%** |
-| Phantom sorghum | Pixel | 149 / 390 | 62% (241) | **14.7%** |
-| Phantom sorghum | Metric | 149 / 390 | 62% (241) | **13.2%** |
+| Dataset         | Domain | Estimates generated | Discarded | Avg % Absolute Error |
+| --------------- | ------ | ------------------- | --------- | -------------------- |
+| Corn (in situ)  | Pixel  | 153 / 531           | 71% (378) | **13.5%**            |
+| Phantom sorghum | Pixel  | 149 / 390           | 62% (241) | **14.7%**            |
+| Phantom sorghum | Metric | 149 / 390           | 62% (241) | **13.2%**            |
 
 The "discarded" count is the number of detections the confidence filter rejected (for example, 390 detections minus 149 generated estimates leaves 241 discarded on phantom sorghum). The discard rate is high by design.
 
@@ -242,28 +242,28 @@ The "discarded" count is the number of detections the confidence filter rejected
 
 Signed % error, absolute % error, and discard rate per plot.
 
-| Plot | Avg % Error | Avg % Abs Error | Discarded |
-| --- | --- | --- | --- |
-| P1 | 8.4 | 10.6 | 55% (40/73) |
-| P2 | 8.9 | 15.8 | 64% (87/135) |
-| P3 | 3.4 | 10.9 | 73% (77/106) |
-| P4 | 3.3 | 17.8 | 70% (52/74) |
-| P5 | -2.7 | 10.2 | 85% (64/75) |
-| P6 | -3.3 | 13.3 | 85% (55/65) |
-| **All** | **5.3** | **13.5** | **71% (378/531)** |
+| Plot    | Avg % Error | Avg % Abs Error | Discarded         |
+| ------- | ----------- | --------------- | ----------------- |
+| P1      | 8.4         | 10.6            | 55% (40/73)       |
+| P2      | 8.9         | 15.8            | 64% (87/135)      |
+| P3      | 3.4         | 10.9            | 73% (77/106)      |
+| P4      | 3.3         | 17.8            | 70% (52/74)       |
+| P5      | -2.7        | 10.2            | 85% (64/75)       |
+| P6      | -3.3        | 13.3            | 85% (55/65)       |
+| **All** | **5.3**     | **13.5**        | **71% (378/531)** |
 
 ### 7.2 Phantom sorghum results, per plant
 
 Pixel and metric error per plant, with the per-stem ground-truth variation (the spread of the three caliper or hand-labeled points along a single stem).
 
-| Plant | Pixel % Err | Pixel % Abs Err | GT var | Discarded | Metric % Err | Metric % Abs Err |
-| --- | --- | --- | --- | --- | --- | --- |
-| P1 | -0.1 | 10.1 | 4.3 | 41% (23/56) | 1.4 | 9.4 |
-| P2 | 9.8 | 9.8 | 9.8 | 97% (32/33) | 0.9 | 0.9 |
-| P3 | -14.3 | 15.1 | 7.0 | 63% (74/118) | -12.8 | 13.7 |
-| P4 | -6.5 | 13.1 | 4.6 | 48% (39/81) | -7.8 | 13.6 |
-| P5 | 0.2 | 22.0 | 6.1 | 72% (73/102) | 3.5 | 16.8 |
-| **All** | **-6.0** | **14.7** | **6.4** | **62% (241/390)** | **-5.0** | **13.2** |
+| Plant   | Pixel % Err | Pixel % Abs Err | GT var  | Discarded         | Metric % Err | Metric % Abs Err |
+| ------- | ----------- | --------------- | ------- | ----------------- | ------------ | ---------------- |
+| P1      | -0.1        | 10.1            | 4.3     | 41% (23/56)       | 1.4          | 9.4              |
+| P2      | 9.8         | 9.8             | 9.8     | 97% (32/33)       | 0.9          | 0.9              |
+| P3      | -14.3       | 15.1            | 7.0     | 63% (74/118)      | -12.8        | 13.7             |
+| P4      | -6.5        | 13.1            | 4.6     | 48% (39/81)       | -7.8         | 13.6             |
+| P5      | 0.2         | 22.0            | 6.1     | 72% (73/102)      | 3.5          | 16.8             |
+| **All** | **-6.0**    | **14.7**        | **6.4** | **62% (241/390)** | **-5.0**     | **13.2**         |
 
 Even on Plant 2, where only **1 of 33** detections survived the filter, that single estimate was accurate, which supports the design choice that per-plot histograms tolerate aggressive filtering.
 
