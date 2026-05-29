@@ -32,12 +32,12 @@ ninja.data = [{
           },
         },{id: "projects-crop-stem-width-phenotyping",
           title: 'Crop stem width phenotyping',
-          description: "In-situ stem width phenotyping pipeline for corn and sorghum from RGB + depth on a moving robot. Faster R-CNN detection, morphological boundary modeling, RANSAC line fits, and depth-based metric conversion. Published in Electronic Imaging (SPIE 2018/2019).",
+          description: "In-situ stem width phenotyping pipeline for corn and sorghum from RGB + depth on a moving robot. Faster R-CNN detection, morphological boundary modeling, RANSAC line fits, and depth-based metric conversion. Published in Electronic Imaging (SPIE 2019).",
           section: "Projects",handler: () => {
               window.location.href = "/projects/08_sorghum/";
             },},{id: "projects-brain-age-prediction-ucsf-sohn-lab",
           title: 'Brain age prediction (UCSF Sohn Lab)',
-          description: "3D CNN that predicts perceived brain age from non-contrast head CT; the perceived-to-actual age discrepancy (PTAD) is regressed against a panel of systemic diseases via a logistic GLM.",
+          description: "A custom 3D CNN predicts perceived brain age from non-contrast head CT. The perceived-to-actual age discrepancy (PTAD) becomes a per-patient feature, regressed against a panel of systemic diseases via univariate and multivariate logistic GLMs.",
           section: "Projects",handler: () => {
               window.location.href = "/projects/11_brain_age/";
             },},{id: "projects-mucus-plug-segmentation-ucsf-fahy-lab",
@@ -47,22 +47,22 @@ ninja.data = [{
               window.location.href = "/projects/10_mucus_plug/";
             },},{id: "projects-eeg-engagement-decoding-ucsf-abbasi-lab",
           title: 'EEG engagement decoding (UCSF Abbasi Lab)',
-          description: "Signal-processing pipeline for decoding attentional engagement from 64-channel EEG. Morlet wavelet time-frequency analysis, non-negative matrix factorization for interpretable pattern extraction, scalp-topography analysis, and cross-validated classification via NMF reconstruction.",
+          description: "Signal-processing pipeline for decoding attentional engagement from 64-channel EEG. Morlet wavelet time-frequency analysis, non-negative matrix factorization for interpretable pattern extraction, scalp-topography mapping, and cross-validated classification by reusing the learned NMF dictionary.",
           section: "Projects",handler: () => {
               window.location.href = "/projects/12_eeg_engagement/";
             },},{id: "projects-breathily",
           title: 'Breathily',
-          description: "Contactless lung function for ALS patients using Intel RealSense depth cameras. Real-time skeleton-tracked chest ROI, 6-stage depth filter chain, regression-based depth-to-volume calibration, full PFT panel from chest wall motion. US Patent.",
+          description: "Contactless pulmonary function testing for ALS and neuromuscular patients using an Intel RealSense depth camera. Cubemos 18-joint skeleton tracking, a 6-stage depth filter chain, skeleton-derived chest ROI, peak-detected respiratory keypoints, regression depth-to-volume calibration, and a full PFT panel from chest wall motion. US Patent.",
           section: "Projects",handler: () => {
               window.location.href = "/projects/09_breathily/";
             },},{id: "projects-carbon-sink-rate-tracking",
           title: 'Carbon sink rate tracking',
-          description: "Computer vision pipeline that turns underwater imagery from custom ocean satellite buoys into per-batch sink rate equations for carbon verification. Frame quality filtering, instance segmentation of biomaterial, floating-vs-sinking classification by segmentation midpoint, exponential decay fitting.",
+          description: "Computer vision pipeline that turns underwater imagery from custom ocean satellite buoys into per-batch sink rate equations for carbon verification. Frame-quality filtering, instance segmentation of biomaterial, floating-vs-sinking classification by segmentation midpoint, and exponential-decay fitting.",
           section: "Projects",handler: () => {
               window.location.href = "/projects/06_running_tide_sink/";
             },},{id: "projects-robotic-shellfish-counter",
           title: 'Robotic shellfish counter',
-          description: "Computer vision pipeline that counts ~1,000 shellfish per frame at 0.125 s/image on Running Tide&#39;s catamaran processing boat. Faster R-CNN with anchor box scales tuned for 2×2 px objects, with a custom small-object refinement pass.",
+          description: "Computer vision pipeline that counts ~1,000 shellfish per frame at 0.125 s/image on Running Tide&#39;s catamaran processing boat. Faster R-CNN with anchor scales tuned for 2×2 px objects, plus a custom small-object post-processing pass, evaluated by absolute counting error against human counts.",
           section: "Projects",handler: () => {
               window.location.href = "/projects/07_shellfish/";
             },},{id: "projects-kelp-phenotyping",
@@ -72,12 +72,12 @@ ninja.data = [{
               window.location.href = "/projects/04_kelp_3d/";
             },},{id: "projects-make-the-dot",
           title: 'Make The Dot',
-          description: "Sketch-to-image apparel render system. SDXL + ControlNet-Union + custom wash LoRAs, served on H100 with TensorRT.",
+          description: "Sketch-to-render apparel system. A flat sketch plus a hex color plus a prompt become a photorealistic studio garment render. SDXL (juggernaut_x_v10) with one ControlNet-Union model, wash-specific LoRAs hot-swapped via TensorRT refit, a multi-stage LAB+HSV+CIEDE2000 recolor, served on H100 through Triton, Celery, and a FastAPI gateway.",
           section: "Projects",handler: () => {
               window.location.href = "/projects/01_make_the_dot/";
             },},{id: "projects-foia-fluent",
           title: 'FOIA Fluent',
-          description: "Civic AI for public records. Multi-source document discovery, anti-hallucination request drafting grounded in statute + eCFR + outcomes, real-time 19-source signals ingest, LLM-driven cross-source pattern detection, and a tool-using chat assistant with 4-tier accuracy escalation.",
+          description: "Civic AI for public records. Multi-source document discovery, anti-hallucination request drafting grounded in statute + eCFR + outcomes, a 19-source live signals ingest, LLM-driven cross-source pattern detection, and a tool-using chat assistant with 4-tier accuracy escalation.",
           section: "Projects",handler: () => {
               window.location.href = "/projects/02_foia_fluent/";
             },},{
