@@ -32,4 +32,4 @@ Additionally, I'm a Data Diplomat at [NYC Data Science for Social Good](https://
 
 - 🥪 Child of [Cambodian sandwich/bakery shop owners](https://www.youtube.com/watch?v=h86E-X3m9YY)
 - 🚑 I worked as a full-time EMT
-- 📚 Recently got hooked on Japanese fiction novels
+- 🎵 Avid vinyl collector, [80+ records and growing](https://www.discogs.com/user/hengloose/collection)
