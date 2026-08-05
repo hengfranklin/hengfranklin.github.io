@@ -9,8 +9,8 @@ ninja.data = [{
     handler: () => {
       window.location.href = "/";
     },
-  },{id: "nav-projects",
-          title: "projects",
+  },{id: "nav-work-experience",
+          title: "work experience",
           description: "Selected work in computer vision, ML, and full-stack AI engineering.",
           section: "Navigation",
           handler: () => {
@@ -30,7 +30,12 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/cv/";
           },
-        },{id: "projects-crop-stem-width-phenotyping",
+        },{id: "projects-multi-band-ir-signature-segmentation-and-tracking",
+          title: 'Multi-band IR signature segmentation and tracking',
+          description: "Feature-point segmentation, cross-correlation, and tracking of aircraft signatures across short-, mid-, and longwave infrared sensor bands. Wavelet and Fourier feature enhancement, normalized 2-D cross-correlation, a quantitative filter benchmark over 612 frames, and a Python/Qt operator GUI.",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/13_jpl_ir_tracking/";
+            },},{id: "projects-crop-stem-width-phenotyping",
           title: 'Crop stem width phenotyping',
           description: "In-situ stem width phenotyping pipeline for corn and sorghum from RGB + depth on a moving robot. Faster R-CNN detection, morphological boundary modeling, RANSAC line fits, and depth-based metric conversion. Published in Electronic Imaging (SPIE 2019).",
           section: "Projects",handler: () => {
