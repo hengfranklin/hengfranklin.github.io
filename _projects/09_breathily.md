@@ -6,6 +6,7 @@ img: assets/img/projects/breathily_pipeline.png
 importance: 4
 category: cv-ml
 affiliation: Breathily
+affiliation_years: 2020 – 2022
 featured: true
 date: 2020-03-01
 date_display: Mar 2020 – Mar 2022

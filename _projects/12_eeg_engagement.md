@@ -6,6 +6,7 @@ img: assets/img/projects/nmf_eeg_p16.png
 importance: 7
 category: cv-ml
 affiliation: UCSF
+affiliation_years: 2018 – 2020
 date: 2019-11-01
 date_display: Nov 2019 – Jun 2020
 role: CV Scientist · UCSF Abbasi Lab

@@ -6,6 +6,7 @@ img: assets/img/projects/mucus_graphical_abstract.jpeg
 importance: 5
 category: cv-ml
 affiliation: UCSF
+affiliation_years: 2018 – 2020
 date: 2019-06-01
 date_display: Jun 2019 – Mar 2020
 role: CV Scientist · UCSF Fahy Lab

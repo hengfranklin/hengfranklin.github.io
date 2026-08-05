@@ -6,6 +6,7 @@ img: assets/img/projects/shellfish_dawson_bins.jpg
 importance: 3
 category: cv-ml
 affiliation: Running Tide
+affiliation_years: 2022 – 2024
 date: 2022-06-01
 date_display: 2022
 role: Computer Vision Engineer · Running Tide

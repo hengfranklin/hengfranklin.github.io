@@ -6,6 +6,7 @@ img: assets/img/projects/mtd_hero.png
 importance: 9
 category: cv-ml
 affiliation: Make The Dot
+affiliation_years: 2025 – 2026
 featured: true
 date: 2025-09-01
 date_display: Sep 2025 – Jan 2026

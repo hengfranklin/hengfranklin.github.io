@@ -6,6 +6,7 @@ img: assets/img/projects/p11_1.png
 importance: 1
 category: cv-ml
 affiliation: Running Tide
+affiliation_years: 2022 – 2024
 featured: true
 date: 2022-09-01
 date_display: 2022 – 2024

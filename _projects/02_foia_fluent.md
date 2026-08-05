@@ -6,6 +6,7 @@ img: assets/img/projects/foia_homepage.png
 importance: 2
 category: ai-engineering
 affiliation: NYC Data Science for Social Good
+affiliation_years: 2026 – Present
 date: 2026-03-01
 date_display: Mar 2026 – Present
 role: Data Science for Social Good (NYCxDSSG)

@@ -6,6 +6,7 @@ img: assets/img/projects/running_tide_camlite_buoy.png
 importance: 2
 category: cv-ml
 affiliation: Running Tide
+affiliation_years: 2022 – 2024
 date: 2022-03-01
 date_display: 2022 – 2024
 role: Computer Vision Engineer · Running Tide

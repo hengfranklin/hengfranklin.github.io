@@ -6,6 +6,7 @@ img: assets/img/projects/brain_age_p3.png
 importance: 6
 category: cv-ml
 affiliation: UCSF
+affiliation_years: 2018 – 2020
 date: 2018-11-01
 date_display: Nov 2018 – Jun 2019
 role: CV Scientist · UCSF Sohn Lab

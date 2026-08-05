@@ -6,6 +6,7 @@ img: assets/img/projects/p06_2.png
 importance: 8
 category: cv-ml
 affiliation: UC Berkeley
+affiliation_years: 2017 – 2019
 date: 2017-05-01
 date_display: May 2017 – Jan 2019
 role: CV Researcher · UC Berkeley
