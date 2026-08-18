@@ -9,8 +9,8 @@ ninja.data = [{
     handler: () => {
       window.location.href = "/";
     },
-  },{id: "nav-work-experience",
-          title: "work experience",
+  },{id: "nav-portfolio",
+          title: "portfolio",
           description: "Selected work in computer vision, ML, and full-stack AI engineering.",
           section: "Navigation",
           handler: () => {
