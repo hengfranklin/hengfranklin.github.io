@@ -25,10 +25,14 @@ layout: default
             {% assign profile_image_class = 'img-fluid z-depth-1
       rounded' %}
           {% endif %}
-          {% capture sizes %}(min-width: {{ site.max_width }}) {{ site.max_width | minus: 30 | times: 0.3}}px, (min-width: 576px)
-      30vw, 95vw"{% endcapture %}
+          {% comment %}
+            Keep these widths in sync with .about-intro .profile in _sass/_about_timeline.scss,
+            otherwise the browser picks a larger candidate than it needs to render.
+          {% endcomment %}
+          {% capture sizes %}(min-width: 576px) 184px, 160px{% endcapture %}
+          {% capture profile_alt %}{{ site.first_name }} {{ site.last_name }}{% endcapture %}
           {%
-            include figure.liquid loading="eager" path=profile_image_path class=profile_image_class sizes=sizes alt=page.profile.image
+            include figure.liquid loading="eager" path=profile_image_path class=profile_image_class sizes=sizes alt=profile_alt
             cache_bust=true
           %}
         {% endif %}
