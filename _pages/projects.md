@@ -1,6 +1,6 @@
 ---
 layout: page
-title: work experience
+title: portfolio
 permalink: /projects/
 description: Selected work in computer vision, ML, and full-stack AI engineering.
 nav: true

@@ -1,0 +1,38 @@
+<section class="about-timeline" aria-label="Career timeline">
+  <ol class="about-timeline-list">
+    {% for entry in site.data.timeline %}
+      <li class="about-timeline-entry">
+        <div class="about-timeline-marker" aria-hidden="true"></div>
+        <div class="about-timeline-aside">
+          <span class="about-timeline-years">{{ entry.years }}</span>
+          <div class="about-timeline-logo">
+            {% capture logo_img %}<img
+              src="{{ entry.logo | relative_url }}"
+              alt="{{ entry.org }} logo"
+              loading="lazy"
+              decoding="async"
+              style="transform: scale({{ entry.logo_scale | default: 1 }});"
+            />{% endcapture %}
+            {% if entry.url %}
+              <a href="{{ entry.url }}" target="_blank" rel="noopener" aria-label="{{ entry.org }}">{{ logo_img }}</a>
+            {% else %}
+              {{ logo_img }}
+            {% endif %}
+          </div>
+        </div>
+        <div class="about-timeline-body">
+          {% for block in entry.blocks %}
+            <p class="about-timeline-lead">{{ block.text }}</p>
+            {% if block.items %}
+              <ul class="about-timeline-bullets">
+                {% for item in block.items %}
+                  <li>{{ item }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </li>
+    {% endfor %}
+  </ol>
+</section>

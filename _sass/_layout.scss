@@ -40,16 +40,6 @@ body.sticky-bottom-footer {
   }
 }
 
-// Location line under the page title (e.g. about page header).
-// Scoped to .post-header to override p.location in _cv.scss.
-.post-header .location {
-  font-size: 1.05rem;
-  color: var(--global-text-color);
-  margin-top: -0.25rem;
-  margin-bottom: 0.75rem;
-  white-space: normal;
-}
-
 // Content layout uses Bootstrap's grid system with responsive columns
 // Main content flows naturally through container-mt-5 and Bootstrap grid classes
 // See _layouts/default.liquid and _includes/projects.liquid for examples

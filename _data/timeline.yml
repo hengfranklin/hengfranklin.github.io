@@ -1,0 +1,104 @@
+# Front-page career timeline (rendered by _includes/about_timeline.liquid).
+# Newest first. Each entry has `blocks`; a block is a paragraph (`text`) with
+# optional `items` bullets hanging off it. Only use `items` when two or more
+# sub-points genuinely belong to the paragraph above them. Inline HTML is fine.
+
+- years: 2026 – Present
+  org: NYC Data Science for Social Good
+  logo: assets/img/logos/nycxdssg.png
+  logo_scale: 1.0
+  url: https://www.nycdssg.org/
+  blocks:
+    - text: >-
+        Data Diplomat at NYCxDSSG. We volunteer and host hackathons/workshops/events. Built
+        <a href="https://www.foiafluent.com/" target="_blank" rel="noopener">FOIA Fluent</a>, an open-source civic AI platform for
+        public records.
+    - text: >-
+        I also write on <a href="https://franklinswriting.substack.com/" target="_blank" rel="noopener">Substack</a>
+        about things I'm interested in like ethical AI, music, and vinyl collecting.
+
+- years: 2025 – 2026
+  org: Make The Dot
+  logo: assets/img/logos/makethedot.png
+  logo_scale: 0.88
+  blocks:
+    - text: >-
+        ML engineer at Make The Dot, building
+        <a href="/projects/01_make_the_dot/">generative AI</a> pipelines for fashion designers.
+        Fine-tuned open-source Stable Diffusion models, experimented with ComfyUI, and did a lot of
+        ML Ops / backend work.
+
+- years: 2022 – 2024
+  org: Running Tide
+  logo: assets/img/logos/running-tide.png
+  logo_scale: 0.9
+  blocks:
+    - text: CV/ML engineer at an ocean-based carbon removal startup.
+      items:
+        - >-
+          <a href="/projects/04_kelp_3d/">2D / 3D automated measurement systems for macroalgae</a>.
+        - >-
+          <a href="/projects/06_running_tide_sink/">Automated tracking and sinking rate measurement
+          of biomaterials deployed in the ocean</a>.
+        - >-
+          <a href="/projects/07_shellfish/">Perception feature for a robotic oyster harvesting
+          platform</a>.
+
+- years: 2020 – 2022
+  org: Breathily
+  logo: assets/img/logos/breathily.png
+  logo_scale: 1.0
+  blocks:
+    - text: >-
+        Co-founded <a href="/projects/09_breathily/">Breathily</a>, in order to make lung function
+        testing more accessible to patients with physical disabilities.
+      items:
+        - >-
+          Designed and ran an IRB-approved clinical study to test our product on live patients at
+          the UCSF Adult Pulmonary Function Lab.
+        - >-
+          Placed 2nd at UC Launch, funded by UCSF Catalyst and NSF I-Corps, and
+          <a href="https://patents.google.com/patent/US20240090795A1/en" target="_blank" rel="noopener">filed patent</a>.
+
+- years: 2018 – 2020
+  org: UCSF
+  logo: assets/img/logos/ucsf.png
+  logo_scale: 0.85
+  blocks:
+    - text: CV scientist across three labs, applying computer vision to medical images.
+      items:
+        - >-
+          <a href="/projects/10_mucus_plug/">Fahy Lab</a>: automated detection and analysis of mucus
+          plugs trapped in lung airways. Published in
+          <a href="https://insight.jci.org/articles/view/174124" target="_blank" rel="noopener">JCI Insight</a>.
+        - >-
+          <a href="/projects/11_brain_age/">Sohn Lab</a>: automated brain age prediction from head
+          CT, using the gap against real age as a systemic disease signal.
+        - >-
+          <a href="/projects/12_eeg_engagement/">Abbasi Lab</a>: automated decoding of attentional
+          engagement from 64-channel EEG.
+
+- years: 2016 – 2018
+  org: UC Berkeley
+  logo: assets/img/logos/berkeley.svg
+  logo_scale: 0.85
+  url: https://www.berkeley.edu/
+  blocks:
+    - text: >-
+        Received a B.A. in Computer Science. Participated in CS clubs (Codeology and VR Club).
+        Lived in Cloyne Co-op. Summer intern at Samsung, working on mobile GPU development.
+    - text: >-
+        Research at the Video and Image Processing Lab under Avideh Zakhor on
+        <a href="/projects/08_sorghum/">crop stem width phenotyping</a>. Published a
+        <a href="https://library.imaging.org/ei/articles/31/13/art00009" target="_blank" rel="noopener">paper</a>.
+
+- years: 2015 – 2016
+  org: NASA JPL
+  logo: assets/img/logos/jpl.svg
+  logo_scale: 0.9
+  url: https://www.jpl.nasa.gov/
+  blocks:
+    - text: Where I was first introduced to computer vision.
+    - text: >-
+        <a href="/projects/13_jpl_ir_tracking/">Multi-band IR tracking</a>: segmenting and tracking
+        aircraft signatures across shortwave, midwave, and longwave infrared.
