@@ -30,7 +30,9 @@ latest_posts:
     </li>
     <li>Favorite book is <em>Together</em> by Dr. Vivek Murthy</li>
     <li>
-      Favorite vinyl from my collection is "Legend - The Best of Bob Marley &amp; The Wailers,"
+      Favorite vinyl from my
+      <a href="https://www.discogs.com/user/hengloose/collection" target="_blank" rel="noopener">collection</a>
+      is "Legend - The Best of Bob Marley &amp; The Wailers,"
       printed in Kingston, Jamaica.
     </li>
     <li>Spent about a year as an EMT</li>
