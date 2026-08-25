@@ -4,13 +4,18 @@
 # sub-points genuinely belong to the paragraph above them. Inline HTML is fine.
 
 - years: 2026 – Present
-  org: NYC Data Science for Social Good
-  logo: assets/img/logos/nycxdssg.png
+  org: Thalo Labs
+  logo: assets/img/logos/thalolabs.png
   logo_scale: 1.0
-  url: https://www.nycdssg.org/
+  url: https://thalolabs.com/
   blocks:
     - text: >-
-        Data Diplomat at NYCxDSSG. We volunteer and host hackathons/workshops/events. Built
+        Joined <a href="https://thalolabs.com/" target="_blank" rel="noopener">Thalo Labs</a> as Senior
+        ML engineer. Building sensors + ML for HVAC.
+    - text: >-
+        Data Diplomat at <a href="https://www.nyc-dssg.org/" target="_blank" rel="noopener">NYCxDSSG</a>.
+        We provide pro-bono technology support to non-profits in NYC, and host
+        hackathons/workshops/events. Built
         <a href="https://www.foiafluent.com/" target="_blank" rel="noopener">FOIA Fluent</a>, an open-source civic AI platform for
         public records.
     - text: >-
