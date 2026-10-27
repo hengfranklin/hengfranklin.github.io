@@ -2,6 +2,21 @@
 layout: default
 ---
 <div class="post">
+  <!-- Fighting-game HUD (decorative, see _sass/_arcade.scss) -->
+  <div class="arcade-hud" aria-hidden="true">
+    <div class="hud-side hud-p1">
+      <div class="hud-score"><span class="hud-tag">1P</span> {{ 'now' | date: '%Y' | prepend: '00' }}</div>
+      <div class="hud-bar"><span class="hud-fill"></span></div>
+      <div class="hud-name">{{ site.first_name }}</div>
+    </div>
+    <div class="hud-timer">99</div>
+    <div class="hud-side hud-p2">
+      <div class="hud-score"><span class="hud-tag">HI</span> 999999</div>
+      <div class="hud-bar"><span class="hud-fill"></span></div>
+      <div class="hud-name">Bugs</div>
+    </div>
+  </div>
+
   <div class="about-intro">
     <header class="post-header">
       <h1 class="post-title">
@@ -73,6 +88,7 @@ layout: default
     <!-- Social -->
     {% if page.social %}
       <div class="social">
+        <p class="arcade-challenger">Here comes a new challenger!</p>
         <div class="contact-icons">{% social_links %}</div>
 
         <div class="contact-note">{{ site.contact_note }}</div>

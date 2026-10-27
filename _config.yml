@@ -7,14 +7,14 @@ first_name: Franklin
 middle_name:
 last_name: Heng
 contact_note: >
-  Last updated August 2026.
+  Last updated October 2026.
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
   CV / ML engineer based in NYC. Building 0 to 1 systems across healthcare, climate, and robotics.
 footer_text: >
   Powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> with the <a href="https://github.com/alshedivat/al-folio">al-folio</a> theme. Hosted on <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
 keywords: computer vision, machine learning, ml engineer, healthcare ai, climate ai, robotics, 3d vision, generative ai, NYC
 lang: en # the language of your site (for example: en, fr, cn, ru, etc.)
-icon: 👋 # the emoji used as the favicon (alternatively, provide image name in /assets/img/)
+icon: 🕹️ # the emoji used as the favicon (alternatively, provide image name in /assets/img/)
 
 url: https://hengfranklin.github.io # the base hostname & protocol for your site
 baseurl: # the subpath of your site, e.g. /blog/. Leave blank for root
@@ -447,7 +447,7 @@ third_party_libraries:
     version: "5.5.0"
   google_fonts:
     url:
-      fonts: "https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&display=swap"
+      fonts: "https://fonts.googleapis.com/css?family=Press+Start+2P|VT323|Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&display=swap"
   highlightjs:
     integrity:
       css:

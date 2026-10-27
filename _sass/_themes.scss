@@ -6,29 +6,38 @@
 
 :root {
   color-scheme: light;
-  --global-bg-color: #{v.$white-color};
-  --global-code-bg-color: #{v.$code-bg-color-light};
-  --global-text-color: #{v.$black-color};
-  --global-text-color-light: #{v.$grey-color};
-  --global-theme-color: #{v.$blue-color};
-  --global-hover-color: #{v.$blue-color};
+  --global-bg-color: #{v.$arcade-paper};
+  --global-code-bg-color: rgba(27, 19, 64, 0.06);
+  --global-text-color: #{v.$arcade-ink};
+  --global-text-color-light: #5a5280;
+  --global-theme-color: #{v.$arcade-red};
+  --global-hover-color: #{v.$arcade-blue};
   --global-hover-text-color: #{v.$white-color};
-  --global-footer-bg-color: #{v.$grey-color-dark};
-  --global-footer-text-color: #{v.$grey-color-light};
-  --global-footer-link-color: #{v.$white-color};
+  --global-footer-bg-color: #{v.$arcade-ink};
+  --global-footer-text-color: #{v.$arcade-paper};
+  --global-footer-link-color: #{v.$arcade-yellow};
   --global-distill-app-color: #{v.$grey-color};
-  --global-divider-color: rgba(0, 0, 0, 0.1);
-  --global-card-bg-color: #{v.$white-color};
-  --global-highlight-color: #{v.$red-color-dark};
-  --global-back-to-top-bg-color: rgba(
-    #{color.channel(v.$black-color, "red", v.$space: rgb)},
-    #{color.channel(v.$black-color, "green", v.$space: rgb)},
-    #{color.channel(v.$black-color, "blue", v.$space: rgb)},
-    0.4
-  );
+  --global-divider-color: rgba(27, 19, 64, 0.18);
+  --global-card-bg-color: #{v.$arcade-paper-card};
+  --global-highlight-color: #{v.$arcade-red};
+  --global-back-to-top-bg-color: #{v.$arcade-red};
   --global-back-to-top-text-color: #{v.$white-color};
-  --global-newsletter-bg-color: #{v.$white-color};
-  --global-newsletter-text-color: #{v.$black-color};
+  --global-newsletter-bg-color: #{v.$arcade-paper-card};
+  --global-newsletter-text-color: #{v.$arcade-ink};
+
+  /* arcade-only tokens */
+  --arcade-ink: #{v.$arcade-ink};
+  --arcade-shadow: #{v.$arcade-ink};
+  --arcade-panel: #{v.$arcade-panel};
+  --arcade-red: #{v.$arcade-red};
+  --arcade-orange: #{v.$arcade-orange};
+  --arcade-yellow: #{v.$arcade-yellow};
+  --arcade-blue: #{v.$arcade-blue};
+  --arcade-cyan: #{v.$arcade-cyan};
+  --arcade-border: #{v.$arcade-ink};
+  --arcade-heading-color: #{v.$arcade-ink};
+  --arcade-heading-shadow: rgba(215, 38, 30, 0.55);
+  --arcade-scanline-opacity: 0.05;
 
   --global-tip-block: #42b983;
   --global-tip-block-bg: #e2f5ec;
@@ -76,28 +85,30 @@
 
 html[data-theme="dark"] {
   color-scheme: dark;
-  --global-bg-color: #{v.$grey-color-dark};
-  --global-code-bg-color: #{v.$code-bg-color-dark};
-  --global-text-color: #{v.$grey-color-light};
-  --global-text-color-light: #{v.$grey-color};
-  --global-theme-color: #{v.$cyan-color};
-  --global-hover-color: #{v.$cyan-color};
-  --global-hover-text-color: #{v.$white-color};
-  --global-footer-bg-color: #{v.$grey-color-light};
-  --global-footer-text-color: #{v.$grey-color-dark};
-  --global-footer-link-color: #{v.$black-color};
-  --global-distill-app-color: #{v.$grey-color-light};
-  --global-divider-color: #424246;
-  --global-card-bg-color: #{v.$grey-900};
-  --global-back-to-top-bg-color: rgba(
-    #{color.channel(v.$white-color, "red", v.$space: rgb)},
-    #{color.channel(v.$white-color, "green", v.$space: rgb)},
-    #{color.channel(v.$white-color, "blue", v.$space: rgb)},
-    0.5
-  );
-  --global-back-to-top-text-color: #{v.$black-color};
-  --global-newsletter-bg-color: #{v.$grey-color-light};
-  --global-newsletter-text-color: #{v.$grey-color-dark};
+  --global-bg-color: #{v.$arcade-night};
+  --global-code-bg-color: #17173f;
+  --global-text-color: #{v.$arcade-lavender};
+  --global-text-color-light: #{v.$arcade-dusk};
+  --global-theme-color: #{v.$arcade-yellow};
+  --global-hover-color: #ff5a4a;
+  --global-hover-text-color: #{v.$arcade-ink};
+  --global-footer-bg-color: #05051a;
+  --global-footer-text-color: #{v.$arcade-dusk};
+  --global-footer-link-color: #{v.$arcade-yellow};
+  --global-distill-app-color: #{v.$arcade-dusk};
+  --global-divider-color: #2c2a66;
+  --global-card-bg-color: #{v.$arcade-night-card};
+  --global-highlight-color: #{v.$arcade-yellow};
+  --global-back-to-top-bg-color: #{v.$arcade-yellow};
+  --global-back-to-top-text-color: #{v.$arcade-ink};
+  --global-newsletter-bg-color: #{v.$arcade-night-card};
+  --global-newsletter-text-color: #{v.$arcade-lavender};
+
+  --arcade-shadow: #000000;
+  --arcade-border: #3f3cb0;
+  --arcade-heading-color: #{v.$arcade-yellow};
+  --arcade-heading-shadow: #{v.$arcade-red};
+  --arcade-scanline-opacity: 0.12;
 
   --global-tip-block: #42b983;
   --global-tip-block-bg: #215d42;

@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: I'm a CV/ML engineer based in NYC. Building solutions for climate and civic engagement.
+subtitle: I'm a CV/ML engineer based in NYC. I like vinyls, pottery, and my neighbor's cat who sneaks into my apartment window.
 
 profile:
   align: right

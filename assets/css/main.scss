@@ -29,6 +29,9 @@
 @use "projects";
 @use "about_timeline";
 
+// Retro arcade skin, loaded after the base partials it restyles
+@use "arcade";
+
 // Other specialized styles
 @use "distill";
 @use "cv";

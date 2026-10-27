@@ -4,6 +4,7 @@
       <li class="about-timeline-entry">
         <div class="about-timeline-marker" aria-hidden="true"></div>
         <div class="about-timeline-aside">
+          <span class="about-timeline-stage">Stage {{ forloop.rindex }}</span>
           <span class="about-timeline-years">{{ entry.years }}</span>
           <div class="about-timeline-logo">
             {% capture logo_img %}<img
