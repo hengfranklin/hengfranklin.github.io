@@ -35,7 +35,6 @@ latest_posts:
       is "Legend - The Best of Bob Marley &amp; The Wailers,"
       printed in Kingston, Jamaica.
     </li>
-    <li>Spent about a year as an EMT</li>
     <li>I love Fall season in NYC 🍂</li>
   </ul>
 </section>
